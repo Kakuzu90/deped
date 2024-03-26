@@ -16,10 +16,13 @@
     <link rel="stylesheet" href="{{ asset("assets/css/app.min.css") }}">
     <link rel="stylesheet" href="{{ asset("assets/css/icons.min.css") }}">
 
+    <link rel="stylesheet" href="{{ asset("assets/css/theme.css") }}">
 </head>
-<body class="authentication-bg authentication-bg-pattern">
+<body class="auth-bg">
 
     @yield("content")
+
+    <div class="auth-overlay"></div>
     
     <script src="{{ asset("assets/js/vendor.min.js") }}"></script>
     <script src="{{ asset("assets/js/pages/authentication.init.js") }}"></script>

@@ -99,7 +99,7 @@
                                         <span>{{ $item->brand }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span>{{ $item->amount }}</span>
+                                        <span>&#8369;{{ $item->moneyFormat() }}</span>
                                     </td>
                                     <td class="text-center">
                                         <span>{{ $item->purchased_at->format("F d, Y") }}</span>

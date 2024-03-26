@@ -66,19 +66,19 @@
                                     <h6 class="text-overflow m-0">Welcome !</h6>
                                 </div>
             
-                                <a href="{{ route("admin.profile") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.home") }}" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Profile</span>
                                 </a>
 
-                                <a href="{{ route("admin.profile") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.home") }}" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Request</span>
                                 </a>
 
                                 <div class="dropdown-divider"></div>
             
-                                <a href="{{ route("admin.logout") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.logout") }}" class="dropdown-item notify-item">
                                     <i class="fe-log-out"></i>
                                     <span>Logout</span>
                                 </a>

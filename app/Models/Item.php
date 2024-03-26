@@ -103,4 +103,8 @@ class Item extends Model
         }
         return "danger";
     }
+
+    public function moneyFormat() {
+        return number_format($this->amount, 2, ".");
+    }
 }

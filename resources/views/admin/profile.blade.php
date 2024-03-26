@@ -78,7 +78,7 @@
                                     <span class="password-eye"></span>
                                 </div>
                             </div>
-                            <small class="text-warning">
+                            <small class="text-danger">
                                 <strong>Note: </strong> For security purpose since your updating your credentials please enter your password for verification.
                             </small>
                         </div>
@@ -140,7 +140,7 @@
                                     <span class="password-eye"></span>
                                 </div>
                             </div>
-                            <small class="text-warning">
+                            <small class="text-danger">
                                 <strong>Note: </strong> For security purpose since your updating your credentials please enter your password for verification.
                             </small>
                         </div>

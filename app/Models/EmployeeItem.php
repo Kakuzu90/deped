@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,11 +32,11 @@ class EmployeeItem extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function item() {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function statusText() {

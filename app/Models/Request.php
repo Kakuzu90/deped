@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,19 +37,19 @@ class Request extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function item() {
-        return $this->belongsTo(Item::class);
+        return $this->belongsTo(Item::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function acceptedBy() {
-        return $this->belongsTo(Admin::class);
+        return $this->belongsTo(Admin::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function releasedBy() {
-        return $this->belongsTo(Admin::class);
+        return $this->belongsTo(Admin::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function scopePending($query) {

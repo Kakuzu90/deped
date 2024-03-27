@@ -83,21 +83,27 @@
                                         <span>{{ $item->purchased_at->format("F d, Y") }}</span>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <a href="{{ route("admin.supplies.history", $item->id) }}" 
-                                            class="action-icon">
-                                            <i class="mdi mdi-eye-plus"></i>
-                                        </a>
-                                        <a href="javascript:void(0);" 
-                                            data-route="{{ route("admin.supplies.show", $item->id) }}" 
-                                            class="edit action-icon">
-                                            <i class="mdi mdi-circle-edit-outline"></i>
-                                        </a>
-                                        <a href="javascript:void(0);" 
-                                            data-route="{{ route("admin.supplies.show", $item->id) }}" 
-                                            data-header="{{ $item->id }}"
-                                            class="delete action-icon">
-                                            <i class="mdi mdi-delete-empty"></i>
-                                        </a>
+                                        <div class="btn-group dropstart">
+                                            <a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-horizontal"></i></a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="javascript:void(;)" d>
+                                                    <i class="mdi mdi-qrcode me-2 text-muted font-18 vertical-middle"></i>
+                                                    Supply QrCode
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route("admin.supplies.history", $item->id) }}">
+                                                    <i class="mdi mdi-eye-plus me-2 text-muted font-18 vertical-middle"></i>
+                                                    Supply History
+                                                </a>
+                                                <a class="edit dropdown-item" href="javascript:void(;)" data-route="{{ route("admin.supplies.show", $item->id) }}">
+                                                    <i class="mdi mdi-circle-edit-outline me-2 text-muted font-18 vertical-middle"></i>
+                                                    Edit Supply
+                                                </a>
+                                                <a class="delete dropdown-item" href="javascript:void(;)" data-header="{{ $item->id }}" data-route="{{ route("admin.supplies.show", $item->id) }}">
+                                                    <i class="mdi mdi-delete-empty me-2 text-muted font-18 vertical-middle"></i>
+                                                    Delete Supply
+                                                </a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach

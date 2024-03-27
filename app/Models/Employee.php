@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,15 +43,15 @@ class Employee extends User
     }
 
     public function position() {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(Position::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function office() {
-        return $this->belongsTo(Office::class);
+        return $this->belongsTo(Office::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function items() {
-        return $this->hasMany(EmployeeItem::class);
+        return $this->hasMany(EmployeeItem::class)->withoutGlobalScope([Deleted::class]);
     }
 
     public function onHand() {

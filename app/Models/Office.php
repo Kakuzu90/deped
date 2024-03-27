@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,6 @@ class Office extends Model
     }
 
     public function employees() {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Employee::class)->withoutGlobalScope([Deleted::class]);
     }
 }

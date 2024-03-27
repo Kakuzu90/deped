@@ -108,21 +108,27 @@
                                         <span class="badge py-1 bg-{{ $item->itemStatusColor() }}">{{ $item->itemStatus() }}</span>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <a href="{{ route("admin.equipments.history", $item->id) }}" 
-                                            class="action-icon">
-                                            <i class="mdi mdi-eye-plus"></i>
-                                        </a>
-                                        <a href="javascript:void(0);" 
-                                            data-route="{{ route("admin.equipments.show", $item->id) }}" 
-                                            class="edit action-icon">
-                                            <i class="mdi mdi-circle-edit-outline"></i>
-                                        </a>
-                                        <a href="javascript:void(0);" 
-                                            data-route="{{ route("admin.equipments.show", $item->id) }}" 
-                                            data-header="{{ $item->id }}"
-                                            class="delete action-icon">
-                                            <i class="mdi mdi-delete-empty"></i>
-                                        </a>
+                                        <div class="btn-group dropstart">
+                                            <a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-horizontal"></i></a>
+                                            <div class="dropdown-menu dropdown-menu-end">
+                                                <a class="dropdown-item" href="javascript:void(;)" d>
+                                                    <i class="mdi mdi-qrcode me-2 text-muted font-18 vertical-middle"></i>
+                                                    Equipment QrCode
+                                                </a>
+                                                <a class="dropdown-item" href="{{ route("admin.equipments.history", $item->id) }}">
+                                                    <i class="mdi mdi-eye-plus me-2 text-muted font-18 vertical-middle"></i>
+                                                    Equipment History
+                                                </a>
+                                                <a class="edit dropdown-item" href="javascript:void(;)" data-route="{{ route("admin.equipments.show", $item->id) }}">
+                                                    <i class="mdi mdi-circle-edit-outline me-2 text-muted font-18 vertical-middle"></i>
+                                                    Edit Equipment
+                                                </a>
+                                                <a class="delete dropdown-item" href="javascript:void(;)" data-header="{{ $item->id }}" data-route="{{ route("admin.equipments.show", $item->id) }}">
+                                                    <i class="mdi mdi-delete-empty me-2 text-muted font-18 vertical-middle"></i>
+                                                    Delete Equipment
+                                                </a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -133,17 +139,6 @@
         </div>
     </div>
 </div>
-
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-
 
 @include("admin.modal.equipment.add")
 @include("admin.modal.equipment.edit")

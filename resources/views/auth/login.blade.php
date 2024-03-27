@@ -17,7 +17,7 @@
                     </a>
                 </div>
                 <p class="my-3">
-                    Enter your email and password to access your account panel.
+                    Enter your username and password to access your account panel.
                 </p>
             </div>
 

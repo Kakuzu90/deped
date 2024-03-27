@@ -81,9 +81,9 @@ class Item extends Model
 
     public function itemColor() {
         if ($this->item_type === Item::EQUIPMENT) {
-            return "primary";
+            return "blue";
         }
-        return "secondary";
+        return "dark";
     }
 
     public function itemStatus() {

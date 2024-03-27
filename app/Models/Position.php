@@ -34,6 +34,6 @@ class Position extends Model
     }
 
     public function employees() {
-        return $this->hasMany(Employee::class)->withoutGlobalScope([Deleted::class]);
+        return $this->hasMany(Employee::class)->withoutGlobalScope(Deleted::class);
     }
 }

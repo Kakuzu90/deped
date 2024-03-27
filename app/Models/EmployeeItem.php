@@ -13,6 +13,7 @@ class EmployeeItem extends Model
 
     public const ON_HAND = 1;
     public const RETURNED = 2;
+    public const TO_REPAIR = 3;
 
     protected $fillable = [
         "employee_id", "item_id",
@@ -32,24 +33,30 @@ class EmployeeItem extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo(Employee::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Employee::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function item() {
-        return $this->belongsTo(Item::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Item::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function statusText() {
         if ($this->status === EmployeeItem::ON_HAND) {
             return "On Hand";
         }
-        return "Returned";
+        if ($this->status === EmployeeItem::RETURNED) {
+            return "Returned";
+        }
+        return "To Repair";
     }
 
     public function statusColor() {
         if ($this->status === EmployeeItem::ON_HAND) {
             return "success";
         }
-        return "warning";
+        if ($this->status === EmployeeItem::RETURNED) {
+            return "warning";
+        }
+        return "danger";
     }
 }

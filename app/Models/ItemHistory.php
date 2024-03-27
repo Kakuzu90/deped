@@ -34,11 +34,11 @@ class ItemHistory extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo(Employee::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Employee::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function item() {
-        return $this->belongsTo(Item::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Item::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function itemType() {

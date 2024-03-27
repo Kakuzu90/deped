@@ -10,6 +10,7 @@
     </title>
     <link rel="shortcut icon" href="{{ asset("assets/images/deped.png") }}" type="image/x-icon">
 
+    <link rel="stylesheet" href="{{ asset("assets/libs/jquery-toast-plugin/jquery.toast.min.css") }}">
     @yield("links")
 
     <script src="{{ asset("assets/js/head.min.js") }}"></script>
@@ -17,6 +18,8 @@
     <link rel="stylesheet" href="{{ asset("assets/css/bootstrap.min.css") }}" id="app-style">
     <link rel="stylesheet" href="{{ asset("assets/css/app.min.css") }}">
     <link rel="stylesheet" href="{{ asset("assets/css/icons.min.css") }}">
+    
+    <link rel="stylesheet" href="{{ asset("assets/css/theme.css") }}">
 
     <style>
         html[data-layout=horizontal] .content {
@@ -66,12 +69,12 @@
                                     <h6 class="text-overflow m-0">Welcome !</h6>
                                 </div>
             
-                                <a href="{{ route("employee.home") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.profile.index") }}" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Profile</span>
                                 </a>
 
-                                <a href="{{ route("employee.home") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.requests.index") }}" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Request</span>
                                 </a>
@@ -90,7 +93,7 @@
             </div>
 
             <div class="content">
-                <div class="container-fluid">
+                <div class="container px-0">
                     @yield("content")
                 </div>
             </div>
@@ -116,6 +119,10 @@
     <script src="{{ asset("assets/js/vendor.min.js") }}"></script>
     <script src="{{ asset("assets/js/app.min.js") }}"></script>
 
+    <script src="{{ asset("assets/libs/jquery-toast-plugin/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset("assets/js/pages/toastr.js") }}"></script>
+    @include("toastr")
     @yield("scripts")
+
 </body>
 </html>

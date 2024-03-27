@@ -43,15 +43,15 @@ class Employee extends User
     }
 
     public function position() {
-        return $this->belongsTo(Position::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Position::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function office() {
-        return $this->belongsTo(Office::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Office::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function items() {
-        return $this->hasMany(EmployeeItem::class)->withoutGlobalScope([Deleted::class]);
+        return $this->hasMany(EmployeeItem::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function onHand() {

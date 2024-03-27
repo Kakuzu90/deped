@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\SupplyController;
 use App\Http\Controllers\Auth\AdminController;
 use App\Http\Controllers\Auth\EmployeeController;
 use App\Http\Controllers\Employee\HomeController;
+use App\Http\Controllers\Employee\ProfileController as EmployeeProfileController;
+use App\Http\Controllers\Employee\RequestController as EmployeeRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,6 +49,17 @@ Route::prefix("employee")
 
     Route::get("logout", [EmployeeController::class, "logout"])->name("logout");
     Route::get("home", [HomeController::class, "index"])->name("home");
+    Route::controller(EmployeeProfileController::class)->prefix("my-profile")->as("profile.")->group(function() {
+        Route::get("", "index")->name("index");
+        Route::put("general", "general")->name("general");
+        Route::patch("password", "password")->name("password");
+    });
+
+    Route::controller(EmployeeRequestController::class)->prefix("requests")->as("requests.")->group(function() {
+        Route::get("", "index")->name("index");
+        Route::get("items", "item")->name("items");
+        Route::delete("destroy/{model}", "destroy")->name("destroy");
+    });
 
 });
 

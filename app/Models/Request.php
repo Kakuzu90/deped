@@ -37,19 +37,19 @@ class Request extends Model
     ];
 
     public function employee() {
-        return $this->belongsTo(Employee::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Employee::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function item() {
-        return $this->belongsTo(Item::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Item::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function acceptedBy() {
-        return $this->belongsTo(Admin::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Admin::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function releasedBy() {
-        return $this->belongsTo(Admin::class)->withoutGlobalScope([Deleted::class]);
+        return $this->belongsTo(Admin::class)->withoutGlobalScope(Deleted::class);
     }
 
     public function scopePending($query) {
@@ -87,7 +87,7 @@ class Request extends Model
 
     public function requestTypeColor() {
         if ($this->request_type === Request::TO_REPAIR) {
-            return "secondary";
+            return "danger";
         }else if ($this->request_type === Request::TO_RETURN) {
             return "warning";
         }

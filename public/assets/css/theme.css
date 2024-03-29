@@ -22,11 +22,13 @@
     position: relative;
 }
 .item-search-container {
-    margin-top: 1.5rem;
     position: relative;
-    height: 500px;
+    height: 347px;
     overflow: auto;
 }
-.h-px-535 {
-    height: 535px;
+.h-px-400 {
+    height: 300px;
+}
+.pagination .disabled {
+	cursor: not-allowed;
 }

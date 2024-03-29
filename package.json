@@ -10,9 +10,16 @@
         "production": "mix --production"
     },
     "devDependencies": {
+        "@vue/compiler-sfc": "^3.4.21",
         "axios": "^0.21",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
-        "postcss": "^8.1.14"
+        "postcss": "^8.1.14",
+        "vue": "^3.4.21",
+        "vue-loader": "^17.3.1"
+    },
+    "dependencies": {
+        "vue3-ladda": "^1.0.5",
+        "vue3-perfect-scrollbar": "^1.6.1"
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
+use App\Models\EmployeeItem;
 use App\Models\Item;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Request as ModelsRequest;
@@ -32,21 +33,7 @@ class RequestController extends Controller
         return redirect()->back()->with("danger", $msg);
     }
 
-    public function item(Request $request) {
-        $query = Item::working();
-        $search = $request->input("search");
-        $type = $request->input("type");
-
-        if ($search) {
-            $query->where("name", "like", "%$search%");
-        }
-
-        if ($type && $type !== "all") {
-            $query->where("item_type", $type);
-        }
-
-        $items = $query->latest()->paginate(15)->withQueryString();
-
-        return view("employee.item", compact("items"));
+    public function item() {
+        return view("employee.item");
     }
 }

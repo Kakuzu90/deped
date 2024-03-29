@@ -39,7 +39,7 @@
                     <div class="col-xl-3 col-lg-4 col-md-6">
                         <div class="search-bar">
                             <div class="position-relative">
-                                <input type="text" name="search" class="form-control" placeholder="Search..." id="search" />
+                                <input type="text" name="search" class="form-control" value="{{ isset($_GET["search"]) ? $_GET["search"] : null }}" placeholder="Search..." id="search" />
                                 <span class="mdi mdi-magnify"></span>
                             </div>
                         </div>
@@ -64,6 +64,11 @@
                     <div class="col-auto">
                         <button type="submit" class="btn btn-success">Apply Filter</button>
                     </div>
+                    @isset($_GET["search"])
+                    <div class="col-auto">
+                        <a href="{{ route("employee.home") }}" class="btn btn-outline-secondary">Reset</a>
+                    </div>
+                    @endisset
                 </form>
             </div>
         </div>
@@ -72,62 +77,48 @@
     <div class="col-12 content-main">
         <div class="row justify-content-center">
 
+            @forelse ($items as $item)
             <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 ribbon-box">
                     <div class="card-header d-flex justify-content-end p-2">
-                        <span class="badge bg-success me-1">On Hand</span>
+                        <span class="badge bg-{{ $item->statusColor() }} me-1">{{ $item->statusText() }}</span>
                     </div>
                     <div class="card-body pt-2 pb-0">
-                        <div class="ribbon-two ribbon-two-blue"><span class="text-light">Dark</span></div>
+                        <div class="ribbon-two ribbon-two-{{ $item->item->itemColor() }}"><span class="text-light">{{ $item->item->itemType() }}</span></div>
                         <div class="d-flex justify-content-center align-items-center flex-column text-center mb-2">
                             <div class="avatar-lg mb-1">
                                 <span class="avatar-title bg-soft-secondary text-secondary font-20 rounded-circle">
                                     <i class="mdi mdi-tools mdi-24px"></i>
                                 </span>
                             </div>
-                            <p class="mb-0 text-secondary fw-bold">123456789</p>
+                            <p class="mb-0 text-secondary fw-bold">{{ $item->item_id }}</p>
                         </div>
                         <p class="mb-0 text-dark">
-                            <span class="fw-bold">Item Name:</span> Acer Laptop
+                            <span class="fw-bold">Item Name:</span> {{ $item->item->name }}
                         </p>
                         <p class="mb-0 text-dark">
-                            <span class="fw-bold">Brand:</span> ACER
+                            <span class="fw-bold">Brand:</span> {{ $item->item->brand }}
                         </p>
                         <p class="mb-0 text-dark">
-                            <span class="fw-bold">Condition:</span> <span class="badge bg-success">Working</span>
+                            <span class="fw-bold">Condition:</span> <span class="badge bg-{{ $item->item->itemStatusColor() }}">{{ $item->item->itemStatus() }}</span>
                         </p>
                     </div>
                     <div class="card-footer p-2 border-top">
                         <p class="mb-0 fw-bold text-dark font-12 text-end">
-                            Date Received: March 3, 2024
+                            Date Received: {{ $item->created_at->format("F d, Y") }}
                         </p>
                     </div>
                 </div>
             </div>
+            @empty
+                <h5 class="text-center text-dark">No Items Found</h5>
+            @endforelse
 
         </div>
     </div>
 
     <div class="col-12">
-        <ul class="pagination pagination-rounded justify-content-end my-2">
-            <li class="page-item">
-                <a class="page-link" href="javascript: void(0);" aria-label="Previous">
-                    <span aria-hidden="true">«</span>
-                    <span class="visually-hidden">Previous</span>
-                </a>
-            </li>
-            <li class="page-item active"><a class="page-link" href="javascript: void(0);">1</a></li>
-            <li class="page-item"><a class="page-link" href="javascript: void(0);">2</a></li>
-            <li class="page-item"><a class="page-link" href="javascript: void(0);">3</a></li>
-            <li class="page-item"><a class="page-link" href="javascript: void(0);">4</a></li>
-            <li class="page-item"><a class="page-link" href="javascript: void(0);">5</a></li>
-            <li class="page-item">
-                <a class="page-link" href="javascript: void(0);" aria-label="Next">
-                    <span aria-hidden="true">»</span>
-                    <span class="visually-hidden">Next</span>
-                </a>
-            </li>
-        </ul>
+        @include("employee.paginate", ["paginator" => $items])
     </div>
 
 </div>
@@ -144,5 +135,13 @@
                 minimumResultsForSearch: Infinity,
             })
         })
+
+        @isset($_GET["type"])
+            $("select[name=type]").val('{{ $_GET["type"] }}').trigger("change")
+        @endisset
+
+        @isset($_GET["status"])
+            $("select[name=status]").val('{{ $_GET["status"] }}').trigger("change")
+        @endisset
     </script>
 @endsection

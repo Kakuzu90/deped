@@ -16,6 +16,7 @@ class CreateEmployeeItemsTable extends Migration
         Schema::create('employee_items', function (Blueprint $table) {
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
             $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
             $table->integer('status')->default(1);
             $table->timestamp('returned_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

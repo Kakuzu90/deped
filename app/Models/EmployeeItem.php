@@ -6,6 +6,7 @@ use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class EmployeeItem extends Model
 {
@@ -16,7 +17,7 @@ class EmployeeItem extends Model
     public const TO_REPAIR = 3;
 
     protected $fillable = [
-        "employee_id", "item_id",
+        "employee_id", "item_id", "quantity",
         "status", "returned_at",
         "deleted_at"
     ];
@@ -38,6 +39,11 @@ class EmployeeItem extends Model
 
     public function item() {
         return $this->belongsTo(Item::class)->withoutGlobalScope(Deleted::class);
+    }
+
+    public function scopeMyItem($query) {
+        return $query->where("employee_id", Auth::guard("employee")->id())
+                ->where("status", self::ON_HAND)->orWhere("status", self::TO_REPAIR);
     }
 
     public function statusText() {

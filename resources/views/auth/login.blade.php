@@ -29,6 +29,7 @@
                     </label>
                     <input 
                         type="text" class="form-control @error("login_error") is-invalid @enderror" name="username"
+												value="{{ old("username") }}"
                         id="username" placeholder="Enter your username"
                         autofocus required />
                     @error("login_error")

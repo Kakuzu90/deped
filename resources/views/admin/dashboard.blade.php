@@ -51,4 +51,56 @@
             />
     </div>
 </div>
+
+<div class="card">
+	<div class="card-body">
+		<h5 class="card-title">Recent Requests</h5>
+		<div class="table-responsive">
+			<table class="table table-hover m-0">
+				<thead>
+					<tr>
+						<th>Employee Name</th>
+						<th class="text-center">Items</th>
+						<th class="text-center">Request Type</th>
+						<th class="text-center">Date Requested</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@forelse ($data["requests"] as $item)
+						<tr>
+							<td>
+								<div class="d-flex justify-content-start align-items-center">
+									<div class="avatar avatar-sm">
+											<span class="avatar-title rounded-circle bg-primary">{{ $item->employee->full_name[0] }}</span>
+									</div>
+									<div class="d-flex flex-column ms-2">
+											<p class="fw-bolder mb-0">{{ $item->employee->full_name }}</p>
+											<span>{{ $item->employee->username }}</span>
+									</div>
+								</div>
+							</td>
+							<td class="text-center">
+								<span class="badge bg-blue p-1">{{ $item->items->count() }}</span>
+							</td>
+							<td class="text-center">
+								<span class="badge bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
+							</td>
+							<td class="text-center">
+								<a href="" 
+									class="action-icon">
+									<i class="mdi mdi-eye-plus"></i>
+								</a>
+							</td>
+						</tr>
+					@empty
+						<tr>
+							<td colspan="5" class="text-center"><span class="text-dark">No Items Available</span></td>
+						</tr>
+					@endforelse
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 @endsection

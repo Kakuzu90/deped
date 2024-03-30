@@ -218,6 +218,7 @@
                         $("#edit input[name=brand]").val(response.brand)
                         $("#edit input[name=amount]").val(response.amount)
                         $("#edit input[name=date_purchased]").val(response.purchased_at)
+												$("#edit textarea[name=description]").val(response.description)
 
                         $('.flatpickr-human-friendly').flatpickr({
                             altInput: true,

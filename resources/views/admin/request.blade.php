@@ -54,14 +54,10 @@
                     <table class="table table-hover m-0" id="datatable">
                         <thead>
                             <tr>
-                                <th>Item Code</th>
-                                <th class="text-center">Item Name</th>
-                                <th class="text-center">Serial No</th>
-                                <th class="text-center">Model No</th>
-                                <th class="text-center">Brand</th>
-                                <th class="text-center">Amount</th>
-                                <th class="text-center">Date Purchased</th>
-                                <th class="text-center">Condition</th>
+                                <th>Employee Name</th>
+                                <th class="text-center">Items</th>
+                                <th class="text-center">Request Type</th>
+                                <th class="text-center">Date Requested</th>
                                 <th></th>
                             </tr>
                         </thead>

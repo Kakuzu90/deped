@@ -63,6 +63,12 @@
                             placeholder="Select a date" required
                         />
                 </div>
+								<div class="mb-1">
+									<label class="form-label">
+										Description <span class="text-danger fw-bolder">*</span>
+									</label>
+									<textarea name="description" class="form-control" rows="5" placeholder="Equipment Description" required></textarea>
+								</div>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Create</button>

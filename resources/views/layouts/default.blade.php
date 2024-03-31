@@ -74,7 +74,7 @@
                                     <span>My Profile</span>
                                 </a>
 
-                                <a href="{{ route("employee.requests") }}" class="dropdown-item notify-item">
+                                <a href="{{ route("employee.requests.index") }}" class="dropdown-item notify-item">
                                     <i class="fe-user"></i>
                                     <span>My Request</span>
                                 </a>

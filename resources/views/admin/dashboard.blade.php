@@ -56,7 +56,7 @@
 	<div class="card-body">
 		<h5 class="card-title">Recent Requests</h5>
 		<div class="table-responsive">
-			<table class="table table-hover m-0">
+			<table class="table table-hover table-centered m-0">
 				<thead>
 					<tr>
 						<th>Employee Name</th>
@@ -84,7 +84,7 @@
 								<span class="badge bg-blue p-1">{{ $item->items->count() }}</span>
 							</td>
 							<td class="text-center">
-								<span class="badge bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
+								<span class="badge p-1 bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
 							</td>
 							<td class="text-center">
 								<a href="" 

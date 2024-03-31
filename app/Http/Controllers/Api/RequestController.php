@@ -7,70 +7,155 @@ use App\Http\Resources\PendingResource;
 use App\Models\EmployeeItem;
 use App\Models\Item;
 use App\Models\Request as ModelsRequest;
+use App\Models\RequestItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
-	public function getPending(Request $request)
+	public function getNew(Request $request)
 	{
-		$perPage = 4;
-		$currentPage = $request->query("page", 1);
+		$search = $request->input("search");
+		$items = Item::working();
 
-		$offset = ($currentPage - 1) * $perPage;
+		if ($search) {
+			$items->where("name", "LIKE", "%$search%");
+		}
 
-		$scope = ModelsRequest::pending()->barrow();
-		$items = $scope->skip($offset)->take($perPage)->latest()->get();
-		$total = ModelsRequest::pending()->barrow()->count();
-		$pages = ceil($total / $perPage);
-		$startRange = ($currentPage - 1) * $perPage + 1;
-		$endRange = min($currentPage * $perPage, $total);
+		$items = $items->latest()->take($search ? null : 10)->get();
 
-		$onFirstPage = $currentPage === 1;
-		$next = $pages > $currentPage ? route("api.employee.pending", ["page" => $currentPage + 1]) : false;
-		$prev = !$onFirstPage ? route("api.employee.pending", ["page" => $currentPage - 1]) : false;
-		$showing = "Showing $startRange to $endRange of $total";
+		return $items->map(function ($item) {
+			return [
+				"image" => asset("assets/images/add-item.png"),
+				"id" => $item->id,
+				"name" => $item->name,
+				"brand" => $item->brand,
+				"quantity" => $item->quantity,
+				"disabled" => $item->isEquipment(),
+				"color" => "bg-" . $item->itemColor(),
+				"text" => $item->itemType(),
+			];
+		});
+	}
 
-		return response()->json([
-			"data" => $items->map(function ($item) {
-				return [
-					"image" => asset("assets/images/add-item.png"),
-					"id" => $item->id,
-					"name" => $item->item->name,
-					"quantity" => $item->quantity,
-					"code" => $item->item_id,
-					"color" => "bg-" . $item->item->itemColor(),
-					"text" => $item->item->itemType(),
-				];
-			}),
-			"pagination" => [
-				"current_page" => $currentPage,
-				"next" => $next,
-				"prev" => $prev,
-				"showing" => $showing
-			]
+	public function storeNew(Request $request)
+	{
+		$request->validate([
+			"form" => "required|array"
 		]);
+
+		$model = ModelsRequest::create([
+			"employee_id" => Auth::guard("employee")->id(),
+			"request_type" => ModelsRequest::TO_BARROW,
+		]);
+
+		foreach ($request->form as $item) {
+			RequestItem::create([
+				"request_id" => $model->id,
+				"item_id" => $item["item_id"],
+				"quantity" => $item["quantity"],
+			]);
+		}
+
+		return response()->json(["redirect" => route("employee.requests.index")]);
 	}
 
-	public function getRepair()
-	{
-		$items = ModelsRequest::pending()->repair()->latest()->get();
-	}
-
-	public function fetchPending(Request $request)
+	public function getRepair(Request $request)
 	{
 		$search = $request->input("search");
 
-		$items = ModelsRequest::pending()->barrow()->pluck("item_id");
-		$inventory = Item::working()->whereNotIn("id", $items);
+		$items = EmployeeItem::working()->whereHas("item", function ($query) {
+			$query->where("item_type", Item::EQUIPMENT);
+		});
 
 		if ($search) {
-			$inventory->where("name", "LIKE", "%$search%");
+			$items->whereHas("item", function ($query) use ($search) {
+				$query->where("name", "like", "%$search%");
+			});
 		}
 
-		$inventory = $inventory->latest()->get();
+		$items = $items->latest()->take($search ? null : 10)->get();
+
+		return $items->map(function ($row) {
+			return [
+				"image" => asset("assets/images/add-item.png"),
+				"id" => $row->item_id,
+				"name" => $row->item->name,
+				"brand" => $row->item->brand,
+				"color" => "bg-" . $row->item->itemColor(),
+				"text" => $row->item->itemType(),
+			];
+		});
 	}
 
-	public function fetchRepair(Request $request)
+	public function storeRepair(Request $request)
 	{
+		$request->validate([
+			"form" => "required|array"
+		]);
+
+		$model = ModelsRequest::create([
+			"employee_id" => Auth::guard("employee")->id(),
+			"request_type" => ModelsRequest::TO_REPAIR,
+		]);
+
+		foreach ($request->form as $item) {
+			RequestItem::create([
+				"request_id" => $model->id,
+				"item_id" => $item["item_id"],
+			]);
+		}
+
+		return response()->json(["redirect" => route("employee.requests.index")]);
+	}
+
+	public function getReturn(Request $request)
+	{
+		$search = $request->input("search");
+
+		$items = EmployeeItem::working();
+
+		if ($search) {
+			$items->whereHas("item", function ($query) use ($search) {
+				$query->where("name", "like", "%$search%");
+			});
+		}
+
+		$items = $items->latest()->take($search ? null : 10)->get();
+
+		return $items->map(function ($row) {
+			return [
+				"image" => asset("assets/images/add-item.png"),
+				"id" => $row->item_id,
+				"name" => $row->item->name,
+				"brand" => $row->item->brand,
+				"quantity" => $row->item->quantity,
+				"disabled" => $row->item->isEquipment(),
+				"color" => "bg-" . $row->item->itemColor(),
+				"text" => $row->item->itemType(),
+			];
+		});
+	}
+
+	public function storeReturn(Request $request)
+	{
+		$request->validate([
+			"form" => "required|array"
+		]);
+
+		$model = ModelsRequest::create([
+			"employee_id" => Auth::guard("employee")->id(),
+			"request_type" => ModelsRequest::TO_REPAIR,
+		]);
+
+		foreach ($request->form as $item) {
+			RequestItem::create([
+				"request_id" => $model->id,
+				"item_id" => $item["item_id"],
+				"quantity" => $item["quantity"],
+			]);
+		}
+
+		return response()->json(["redirect" => route("employee.requests.index")]);
 	}
 }

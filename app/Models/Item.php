@@ -116,6 +116,11 @@ class Item extends Model
 		return "danger";
 	}
 
+	public function isEquipment()
+	{
+		return $this->item_type === Item::EQUIPMENT;
+	}
+
 	public function moneyFormat()
 	{
 		return number_format($this->amount, 2, ".");

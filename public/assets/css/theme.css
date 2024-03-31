@@ -23,11 +23,11 @@
 }
 .item-search-container {
     position: relative;
-    height: 347px;
+    height: 460px;
     overflow: auto;
 }
-.h-px-400 {
-    height: 300px;
+.request-container {
+    height: 500px;
 }
 .pagination .disabled {
 	cursor: not-allowed;

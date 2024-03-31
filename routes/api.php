@@ -17,7 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware("auth:employee")->as("api.employee.")->group(function () {
 	Route::prefix("requests")->controller(RequestController::class)->group(function () {
-		Route::get("pending", "getPending")->name("pending");
-		Route::get("repair", "getRepair")->name("repair");
+		Route::get("new", "getNew");
+		Route::get("repair", "getRepair");
+		Route::get("return", "getReturn");
+		Route::post("new/store", "storeNew");
+		Route::post("repair/store", "storeRepair");
+		Route::post("return/store", "storeReturn");
 	});
 });

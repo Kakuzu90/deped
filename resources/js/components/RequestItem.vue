@@ -129,7 +129,7 @@
 												<span>Previous</span>
 											</a>
 										</li>
-										<li class="page-item active">
+										<li class="page-item active" v-if="pendingPagination.has_page">
 											<a class="page-link" href="javascript: void(0);">{{ pendingCurrentPage }}</a>
 										</li>
 										<li class="page-item" :class="{'disabled': !pendingPagination.next}">

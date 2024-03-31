@@ -111,7 +111,25 @@
                 </div>
             </div>
             @empty
-                <h5 class="text-center text-dark">No Items Found</h5>
+            <div class="col-xl-3 col-lg-4 col-md-6">
+							<div class="card">
+								<div class="card-body text-center">
+									<div class="d-flex justify-content-center">
+										<div class="avatar-xl">
+											<span class="avatar-title bg-soft-danger text-danger font-20 rounded-circle">
+												<i class="mdi mdi-checkbox-blank-off mdi-24px"></i>
+											</span>
+										</div>
+									</div>
+									@isset($_GET["search"])
+									<h4 class="text-dark my-3">No results found for <span class="text-capitalize text-decoration-underline text-blue">{{ $_GET["search"] }}</span></h4>
+									@else
+									<h4 class="text-dark my-3">No Items Available</h4>
+									@endisset	
+									<a href="{{ route("employee.requests.index") }}" class="btn btn-sm btn-blue">Make Request</a>
+								</div>
+							</div>
+						</div>
             @endforelse
 
         </div>

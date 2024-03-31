@@ -6,6 +6,7 @@ use App\Scopes\Deleted;
 use App\Traits\HasDeletedScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class Request extends Model
 {
@@ -54,6 +55,11 @@ class Request extends Model
 	public function releasedBy()
 	{
 		return $this->belongsTo(Admin::class)->withoutGlobalScope(Deleted::class);
+	}
+
+	public function scopeMyRequest($query)
+	{
+		return $query->where("employee_id", Auth::guard("employee")->id());
 	}
 
 	public function scopePending($query)

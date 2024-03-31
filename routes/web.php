@@ -59,6 +59,7 @@ Route::prefix("employee")
 			Route::get("new", "new")->name("new");
 			Route::get("repair", "repair")->name("repair");
 			Route::get("return", "return")->name("return");
+			Route::get("{request}/update", "edit")->name("edit");
 		});
 	});
 

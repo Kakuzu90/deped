@@ -4,7 +4,7 @@
     @if (Session::get("status"))
         Welcome {{ auth()->guard("employee")->user()->name }}
     @else
-        Repair Request
+        {{ $request->requestType() }} Request
     @endif
 @endsection
 
@@ -26,14 +26,14 @@
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Deped</a></li>
                     <li class="breadcrumb-item"><a href="{{ route("employee.requests.index") }}">Request</a></li>
-                    <li class="breadcrumb-item active">Repair Request</li>
+                    <li class="breadcrumb-item active">{{ $request->requestType() }} Request</li>
                 </ol>
             </div>
-            <h4 class="page-title">Repair Request</h4>
+            <h4 class="page-title">{{ $request->requestType() }} Request</h4>
         </div>
     </div>
     
-		<repair-request api="http://127.0.0.1:8000/api/requests/" />
+		<update-request api="{{ route("api.employee.requests.update", $request->id) }}" />
 </div>
 @endsection
 

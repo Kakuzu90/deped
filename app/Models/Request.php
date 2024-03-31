@@ -131,4 +131,19 @@ class Request extends Model
 		}
 		return "danger";
 	}
+
+	public function isToBarrow()
+	{
+		return $this->request_type === Request::TO_BARROW;
+	}
+
+	public function isToRepair()
+	{
+		return $this->request_type === Request::TO_REPAIR;
+	}
+
+	public function isToReturn()
+	{
+		return $this->request_type === Request::TO_RETURN;
+	}
 }

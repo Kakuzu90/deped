@@ -20,8 +20,11 @@ Route::middleware("auth:employee")->as("api.employee.")->group(function () {
 		Route::get("new", "getNew");
 		Route::get("repair", "getRepair");
 		Route::get("return", "getReturn");
+		Route::get("items/{model}", "getUpdate")->name("requests.update");
+		Route::get("items/{model}/inventory", "edit");
 		Route::post("new/store", "storeNew");
 		Route::post("repair/store", "storeRepair");
 		Route::post("return/store", "storeReturn");
+		Route::post("items/{model}/update", "update");
 	});
 });

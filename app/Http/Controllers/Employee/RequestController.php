@@ -27,4 +27,9 @@ class RequestController extends Controller
 	{
 		return view("employee.request.return");
 	}
+
+	public function edit(Request $request)
+	{
+		return view("employee.request.update", compact("request"));
+	}
 }

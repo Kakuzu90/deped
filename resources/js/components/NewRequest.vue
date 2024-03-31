@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 
@@ -10,6 +10,8 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 	const form = ref([]);
 	const searchLoading = ref(false);
 	const btnLoading = ref(false);
+	const itemsPerPage = 6;
+	const currentPage = ref(1);
 
 	const getLists = () => {
 		axios.get(props.api + "new")
@@ -66,12 +68,34 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 	}
 
 	const submit = () => {
+		btnLoading.value = true;
 		axios.post(props.api + "new/store", {form: form.value})
 			.then((response) => {
-				console.log(response.data)
-				console.log(response.status)
+				btnLoading.value = false;
+				if (response.status === 200) {
+					window.location.assign(response.data.redirect)
+				}
 			})
 	}
+
+	const totalPages = computed(() => Math.ceil(form.value.length / itemsPerPage));
+	const paginatedItems = computed(() => {
+		const startIndex = (currentPage.value - 1) * itemsPerPage;
+		const endIndex = startIndex + itemsPerPage;
+		return form.value.slice(startIndex, endIndex);
+	});
+
+	const prevPage = () => {
+		if (currentPage.value > 1) {
+			currentPage.value--;
+		}
+	};
+
+	const nextPage = () => {
+		if (currentPage.value < totalPages.value) {
+			currentPage.value++;
+		}
+	};
 
 	onMounted(() => {
 		getLists()
@@ -96,13 +120,13 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 									</tr>
 								</thead>
 								<tbody>
-									<tr v-if="form.length === 0">
+									<tr v-if="paginatedItems.length === 0">
 										<td colspan="4">
 											<h5 class="text-muted text-center">No Items Available</h5>
 										</td>
 									</tr>
 									<tr
-										v-for="(item, index) in form"
+										v-for="(item, index) in paginatedItems"
 										:key="index"
 									>
 										<td>
@@ -143,14 +167,14 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 						</div>
 					</div>
 					<div class="d-flex justify-content-between">
-						<div class="btn-group">
-							<button type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Previous</button>
-							<button type="button" class="btn btn-sm btn-secondary">1</button>
-							<button type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Next</button>
+						<div class="btn-group" v-if="totalPages > 0">
+							<button @click="prevPage" :disabled="currentPage === 1" type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Previous</button>
+							<button type="button" class="btn btn-sm btn-secondary">Page {{ currentPage }} of {{ totalPages }}</button>
+							<button @click="nextPage" :disabled="currentPage === totalPages" type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Next</button>
 						</div>
-						<button type="button" class="btn btn-sm btn-blue waves-effect waves-light" @click="submit">
+						<vue-ladda @click="submit" button-class="btn btn-sm btn-blue waves-effect waves-light" data-style="slide-left" :loading="btnLoading">
 							<i class="mdi mdi-content-save-move"></i> Submit
-						</button>
+						</vue-ladda>
 					</div>
 				</div>
 

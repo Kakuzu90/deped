@@ -77,7 +77,7 @@
 												<span class="badge p-1 bg-{{ $item->requestStatusColor() }}">{{ $item->requestStatus() }}</span>
 											</td>
 											<td class="text-center">
-												<a 
+												<a href="{{ route("employee.requests.edit", $item->id) }}"
 													class="action-icon">
 													<i class="mdi mdi-eye-plus"></i>
 												</a>

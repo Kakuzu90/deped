@@ -88,6 +88,7 @@ Route::prefix("admin")
 			Route::apiResource("employees", AdminEmployeeController::class);
 			Route::get("supplies/{item}/history", [SupplyController::class, "history"])->name("supplies.history");
 			Route::apiResource("supplies", SupplyController::class);
+			Route::get("equipments/generate", [EquipmentController::class, "generate"])->name("equipments.generate");
 			Route::get("equipments/{item}/history", [EquipmentController::class, "history"])->name("equipments.history");
 			Route::apiResource("equipments", EquipmentController::class);
 			Route::apiResource("requests", RequestController::class);

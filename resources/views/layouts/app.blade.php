@@ -82,10 +82,30 @@
                     </li>
                     <li class="menu-title">Transaction</li>
                     <li class="menu-item">
-                        <a href="{{ route("admin.requests.index") }}" class="menu-link">
-                            <span class="menu-icon"><i class="mdi mdi-clipboard-account"></i></span>
-                            <span class="menu-text"> Requests </span>
-                        </a>
+                        <a href="#request-menu" class="menu-link" data-bs-toggle="collapse">
+													<span class="menu-icon"><i class="mdi mdi-clipboard-account"></i></span>
+													<span class="menu-text"> Requests </span>
+													<span class="menu-arrow"></span>
+												</a>
+												<div class="collapse" id="request-menu">
+													<ul class="sub-menu">
+														<li class="menu-item">
+																<a href="{{ route("admin.requests.index") }}" class="menu-link">
+																		<span class="menu-text">Pending</span>
+																</a>
+														</li>
+														<li class="menu-item">
+															<a href="project-list.html" class="menu-link">
+																	<span class="menu-text">Accepted</span>
+															</a>
+													</li>
+													<li class="menu-item">
+														<a href="project-list.html" class="menu-link">
+																<span class="menu-text">Rejected</span>
+														</a>
+												</li>
+													</ul>
+												</div>
                     </li>
                 </ul>
                 <div class="clearfix"></div>

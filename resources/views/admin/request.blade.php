@@ -62,6 +62,33 @@
                             </tr>
                         </thead>
                         <tbody>
+													@foreach ($requests as $item)
+													<tr>
+														<td>
+															<div class="d-flex justify-content-start align-items-center">
+																<div class="avatar avatar-sm">
+																		<span class="avatar-title rounded-circle bg-primary">{{ $item->employee->full_name[0] }}</span>
+																</div>
+																<div class="d-flex flex-column ms-2">
+																		<p class="fw-bolder mb-0">{{ $item->employee->full_name }}</p>
+																		<span>{{ $item->employee->username }}</span>
+																</div>
+															</div>
+														</td>
+														<td class="text-center">
+															<span class="badge bg-blue p-1">{{ $item->items->count() }}</span>
+														</td>
+														<td class="text-center">
+															<span class="badge p-1 bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
+														</td>
+														<td class="text-center">
+															<a href="" 
+																class="action-icon">
+																<i class="mdi mdi-eye-plus"></i>
+															</a>
+														</td>
+													</tr>
+													@endforeach
                         </tbody>
                     </table>
                 </div>

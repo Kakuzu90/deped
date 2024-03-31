@@ -17,7 +17,7 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$except = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+		$except = EmployeeItem::working()->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		})->pluck("item_id");
 		$items = Item::working()->whereNotIn("id", $except);
@@ -26,7 +26,7 @@ class RequestController extends Controller
 			$items->where("name", "LIKE", "%$search%");
 		}
 
-		$items = $items->latest()->take($search ? null : 10)->get();
+		$items = $items->orderBy("item_type", "asc")->latest()->take($search ? null : 10)->get();
 
 		return $items->map(function ($item) {
 			return [
@@ -68,7 +68,7 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$items = EmployeeItem::working()->whereHas("item", function ($query) {
+		$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		});
 
@@ -117,7 +117,7 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$items = EmployeeItem::working();
+		$items = EmployeeItem::myItem()->working();
 
 		if ($search) {
 			$items->whereHas("item", function ($query) use ($search) {
@@ -185,7 +185,7 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$except = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+		$except = EmployeeItem::working()->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		})->pluck("item_id");
 		$items = Item::working()->whereNotIn("id", $except);

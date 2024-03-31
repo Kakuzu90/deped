@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 
 class RequestController extends Controller
 {
-    public function index() {
-        return view("admin.request");
-    }
+	public function index()
+	{
+		$requests = ModelsRequest::pending()->latest()->get();
+		return view("admin.request", compact("requests"));
+	}
 }

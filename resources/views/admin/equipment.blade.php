@@ -57,10 +57,10 @@
                     <i class="mdi mdi-plus-circle"></i> Add Equipment
                 </button>
 
-                <button type="button" class="btn btn-icon btn-outline-blue waves-effect waves-light float-end me-1"
+                {{-- <a href="{{ route("admin.equipments.generate") }}" class="btn btn-icon btn-outline-blue waves-effect waves-light float-end me-1"
                 >
                     <i class="mdi mdi-qrcode"></i>
-                </button>
+                </a> --}}
 
                 <h4 class="header-title mb-4">Manage Equipments</h4>
                 <div class="table-responsive">
@@ -111,7 +111,7 @@
                                         <div class="btn-group dropstart">
                                             <a href="javascript: void(0);" class="table-action-btn dropdown-toggle arrow-none btn btn-light btn-sm" data-bs-toggle="dropdown" aria-expanded="false"><i class="mdi mdi-dots-horizontal"></i></a>
                                             <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="javascript:void(;)" d>
+                                                <a class="dropdown-item" href="data:image/png;base64, {!! base64_encode(QrCode::format("svg")->size(200)->generate($item->id)) !!}" download="{{ $item->id }}.svg">
                                                     <i class="mdi mdi-qrcode me-2 text-muted font-18 vertical-middle"></i>
                                                     Equipment QrCode
                                                 </a>

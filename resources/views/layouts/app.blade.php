@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-topbar-color="dark">
+<html lang="en" data-topbar-color="dark" data-sidenav-side="condensed">
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="UTF-8">
@@ -95,12 +95,12 @@
 																</a>
 														</li>
 														<li class="menu-item">
-															<a href="project-list.html" class="menu-link">
+															<a href="{{ route("admin.requests.accepted") }}" class="menu-link">
 																	<span class="menu-text">Accepted</span>
 															</a>
 													</li>
 													<li class="menu-item">
-														<a href="project-list.html" class="menu-link">
+														<a href="{{ route("admin.requests.rejected") }}" class="menu-link">
 																<span class="menu-text">Rejected</span>
 														</a>
 												</li>
@@ -156,7 +156,7 @@
                 </div>
             </div>
 
-            <div class="content">
+            <div class="content" id="app">
                 <div class="container-fluid">
                     @yield("content")
                 </div>

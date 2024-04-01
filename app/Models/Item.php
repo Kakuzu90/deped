@@ -55,6 +55,17 @@ class Item extends Model
 		return $this->attributes["name"] = ucwords($value);
 	}
 
+	public function equipItems()
+	{
+		return $this->hasMany(EmployeeItem::class);
+	}
+
+	public function quantity()
+	{
+		$calculate = $this->quantity - $this->equipItems()->sum("quantity");
+		return $calculate > 0 ? $calculate : 0;
+	}
+
 	public function scopeEquipment($query)
 	{
 		return $query->where("item_type", Item::EQUIPMENT);
@@ -119,6 +130,26 @@ class Item extends Model
 	public function isEquipment()
 	{
 		return $this->item_type === Item::EQUIPMENT;
+	}
+
+	public function isSupply()
+	{
+		return $this->item_type === Item::SUPPLY;
+	}
+
+	public function isWorking()
+	{
+		return $this->status === Item::WORKING;
+	}
+
+	public function isRepair()
+	{
+		return $this->status === Item::REPAIR;
+	}
+
+	public function isDefective()
+	{
+		return $this->status === Item::DEFECTIVE;
 	}
 
 	public function moneyFormat()

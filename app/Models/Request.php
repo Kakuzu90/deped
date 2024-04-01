@@ -132,6 +132,21 @@ class Request extends Model
 		return "danger";
 	}
 
+	public function isPending()
+	{
+		return $this->status === Request::PENDING;
+	}
+
+	public function isAccepted()
+	{
+		return $this->status === Request::ACCEPTED;
+	}
+
+	public function isRejected()
+	{
+		return $this->status === Request::REJECTED;
+	}
+
 	public function isToBarrow()
 	{
 		return $this->request_type === Request::TO_BARROW;

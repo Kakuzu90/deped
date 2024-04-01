@@ -70,6 +70,9 @@ Route::prefix("admin")
 		Route::get("/", function () {
 			return redirect()->route("admin.dashboard");
 		});
+		Route::get("requests", function () {
+			return redirect()->route("admin.requests.index");
+		});
 
 		Route::middleware("guest")->controller(AdminController::class)->group(function () {
 			Route::get("login", "index")->name("login");
@@ -88,10 +91,14 @@ Route::prefix("admin")
 			Route::apiResource("employees", AdminEmployeeController::class);
 			Route::get("supplies/{item}/history", [SupplyController::class, "history"])->name("supplies.history");
 			Route::apiResource("supplies", SupplyController::class);
-			Route::get("equipments/generate", [EquipmentController::class, "generate"])->name("equipments.generate");
 			Route::get("equipments/{item}/history", [EquipmentController::class, "history"])->name("equipments.history");
 			Route::apiResource("equipments", EquipmentController::class);
-			Route::apiResource("requests", RequestController::class);
+			Route::controller(RequestController::class)->prefix("requests")->as("requests.")->group(function () {
+				Route::get("pending", "index")->name("index");
+				Route::get("accepted", "accepted")->name("accepted");
+				Route::get("rejected", "rejected")->name("rejected");
+				Route::get("pending/{request}", "barrow")->name("barrow");
+			});
 			Route::controller(ProfileController::class)->group(function () {
 				Route::get("my-profile", "index")->name("profile");
 				Route::put("my-profile", "general")->name("profile.general");
@@ -99,3 +106,7 @@ Route::prefix("admin")
 			});
 		});
 	});
+
+Route::fallback(function () {
+	abort(404);
+});

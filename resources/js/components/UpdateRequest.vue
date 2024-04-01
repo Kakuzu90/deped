@@ -4,6 +4,7 @@
 
 	const props = defineProps(["api"]);
 
+	const hideForm = ref(false);
 	const search = ref("");
 	const lists = ref([]);
 	const form = ref([]);
@@ -23,7 +24,8 @@
 	const getForm = () => {
 		axios.get(props.api)
 		.then((response) => {
-			form.value = response.data;
+			hideForm.value = response.data.editable;
+			form.value = response.data.data;
 		})
 	}
 
@@ -38,7 +40,7 @@
 
 	const selectItem = (item) => {
 		const isInArray = form.value.some(row => row.item_id === item.id);
-		if (!isInArray) {
+		if (!isInArray && hideForm.value) {
 			const temp = {
 				image: item.image,
 				item_id: item.id,
@@ -77,14 +79,16 @@
 	}
 
 	const submit = () => {
-		btnLoading.value = true;
-		axios.post(props.api + "/update", {form: form.value, delete: deleteForm.value})
-			.then((response) => {
-				btnLoading.value = false;
-				if (response.status === 200) {
-					window.location.assign(response.data.redirect)
-				}
-			})
+		if (hideForm.value) {
+			btnLoading.value = true;
+			axios.post(props.api + "/update", {form: form.value, delete: deleteForm.value})
+				.then((response) => {
+					btnLoading.value = false;
+					if (response.status === 200) {
+						window.location.assign(response.data.redirect)
+					}
+				})
+		}
 	}
 
 	const totalPages = computed(() => Math.ceil(form.value.length / itemsPerPage));
@@ -182,7 +186,7 @@
 							<button type="button" class="btn btn-sm btn-secondary">Page {{ currentPage }} of {{ totalPages }}</button>
 							<button @click="nextPage" :disabled="currentPage === totalPages" type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Next</button>
 						</div>
-						<vue-ladda @click="submit" button-class="btn btn-sm btn-success waves-effect waves-light" data-style="slide-left" :loading="btnLoading">
+						<vue-ladda v-if="hideForm" @click="submit" button-class="btn btn-sm btn-success waves-effect waves-light" data-style="slide-left" :loading="btnLoading">
 							<i class="mdi mdi-content-save-move"></i> Save Changes
 						</vue-ladda>
 					</div>

@@ -15,7 +15,7 @@ class HomeController extends Controller
 		$status = $request->input("status");
 		$type = $request->input("type");
 
-		$items = EmployeeItem::whereHas("item", function ($query) use ($search, $type) {
+		$items = EmployeeItem::myItem()->whereHas("item", function ($query) use ($search, $type) {
 			if ($search) {
 				$query->where("name", "like", "%$search%");
 			}

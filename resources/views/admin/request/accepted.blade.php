@@ -4,7 +4,7 @@
     @if (Session::get("status"))
     Welcome {{ auth()->user()->name }}
     @else
-    Request Page
+    Accepted Request Page
     @endif
 @endsection
 
@@ -22,30 +22,30 @@
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Deped</a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Transaction</a></li>
-                    <li class="breadcrumb-item active">Requests</li>
+                    <li class="breadcrumb-item active">Accepted Requests</li>
                 </ol>
             </div>
-            <h4 class="page-title">Requests</h4>
+            <h4 class="page-title">Accepted Requests</h4>
         </div>
     </div>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-6 col-xl-3">
-        <x-widget
-            title="To Barrow" :count="getRequestBarrow()" icon="mdi mdi-book-arrow-left" color="success"
-            />
-    </div>
-    <div class="col-md-6 col-xl-3">
-        <x-widget
-            title="To Return" :count="getRequestReturned()" icon="mdi mdi-book-refresh" color="warning"
-            />
-    </div>
-    <div class="col-md-6 col-xl-3">
-        <x-widget
-            title="To Repair" :count="getRequestRepair()" icon="mdi mdi-book-cog" color="danger"
-            />
-    </div>
+			<div class="col-md-6 col-xl-3">
+				<x-widget
+						title="To Barrow" :count="$data['barrow']" icon="mdi mdi-book-arrow-left" color="success"
+						/>
+		</div>
+		<div class="col-md-6 col-xl-3">
+				<x-widget
+						title="To Return" :count="$data['return']" icon="mdi mdi-book-refresh" color="warning"
+						/>
+		</div>
+		<div class="col-md-6 col-xl-3">
+				<x-widget
+						title="To Repair" :count="$data['repair']" icon="mdi mdi-book-cog" color="danger"
+						/>
+		</div>
     <div class="col-12">
         <div class="card">
             <div class="card-body">
@@ -62,7 +62,7 @@
                             </tr>
                         </thead>
                         <tbody>
-													@foreach ($requests as $item)
+													@foreach ($data["requests"] as $item)
 													<tr>
 														<td>
 															<div class="d-flex justify-content-start align-items-center">
@@ -82,10 +82,10 @@
 															<span class="badge p-1 bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
 														</td>
 														<td class="text-center">
-															<a href="" 
-																class="action-icon">
-																<i class="mdi mdi-eye-plus"></i>
-															</a>
+															<span>{{ $item->created_at->format("F d, Y") }}</span>
+														</td>
+														<td class="text-center">
+															
 														</td>
 													</tr>
 													@endforeach
@@ -110,7 +110,7 @@
     <script>
         $(document).ready(function(){
             $("#datatable").DataTable({
-                order: [[0, "asc"]]
+                order: [[3, "asc"],[0, "asc"]]
             })
             $(".dataTables_length select").addClass("form-select")
             $(".dataTables_length select").removeClass("custom-select custom-select-sm")

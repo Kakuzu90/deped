@@ -48,24 +48,3 @@ if (!function_exists("getDefective")) {
 		return Item::equipment()->defective()->count();
 	}
 }
-
-if (!function_exists("getRequestBarrow")) {
-	function getRequestBarrow()
-	{
-		return Request::barrow()->count();
-	}
-}
-
-if (!function_exists("getRequestRepair")) {
-	function getRequestRepair()
-	{
-		return Request::repair()->count();
-	}
-}
-
-if (!function_exists("getRequestReturned")) {
-	function getRequestReturned()
-	{
-		return Request::returned()->count();
-	}
-}

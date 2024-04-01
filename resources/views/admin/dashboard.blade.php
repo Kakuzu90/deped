@@ -87,6 +87,9 @@
 								<span class="badge p-1 bg-{{ $item->requestTypeColor() }}">{{ $item->requestType() }}</span>
 							</td>
 							<td class="text-center">
+								<span>{{ $item->created_at->format("F d, Y") }}</span>
+							</td>
+							<td class="text-center">
 								<a href="" 
 									class="action-icon">
 									<i class="mdi mdi-eye-plus"></i>

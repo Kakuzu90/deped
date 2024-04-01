@@ -10,6 +10,7 @@ use App\Models\Request as ModelsRequest;
 use App\Models\RequestItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class RequestController extends Controller
 {
@@ -28,13 +29,15 @@ class RequestController extends Controller
 
 		$items = $items->orderBy("item_type", "asc")->latest()->take($search ? null : 10)->get();
 
-		return $items->map(function ($item) {
+		return $items->filter(function ($item) {
+			return $item->quantity() > 0;
+		})->map(function ($item) {
 			return [
 				"image" => asset("assets/images/add-item.png"),
 				"id" => $item->id,
 				"name" => $item->name,
 				"brand" => $item->brand,
-				"quantity" => $item->quantity,
+				"quantity" => $item->isEquipment() ? $item->quantity : $item->quantity(),
 				"disabled" => $item->isEquipment(),
 				"color" => "bg-" . $item->itemColor(),
 				"text" => $item->itemType(),
@@ -60,6 +63,8 @@ class RequestController extends Controller
 				"quantity" => $item["quantity"],
 			]);
 		}
+
+		Session::flash("success", ["Request Saved", "You have successfully submitted a barrow request with " . count($request->form) . " items."]);
 
 		return response()->json(["redirect" => route("employee.requests.index")]);
 	}
@@ -110,6 +115,8 @@ class RequestController extends Controller
 			]);
 		}
 
+		Session::flash("success", ["Request Saved", "You have successfully submitted a repair request."]);
+
 		return response()->json(["redirect" => route("employee.requests.index")]);
 	}
 
@@ -117,7 +124,9 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$items = EmployeeItem::myItem()->working();
+		$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+			$query->where("item_type", Item::EQUIPMENT);
+		});
 
 		if ($search) {
 			$items->whereHas("item", function ($query) use ($search) {
@@ -134,7 +143,7 @@ class RequestController extends Controller
 				"name" => $row->item->name,
 				"brand" => $row->item->brand,
 				"quantity" => $row->quantity,
-				"max" => $row->item->quantity,
+				"max" => $row->item->isEquipment() ? $row->item->quantity : $row->item->quantity(),
 				"disabled" => $row->item->isEquipment(),
 				"color" => "bg-" . $row->item->itemColor(),
 				"text" => $row->item->itemType(),
@@ -161,24 +170,29 @@ class RequestController extends Controller
 			]);
 		}
 
+		Session::flash("success", ["Request Saved", "You have successfully submitted a return request."]);
+
 		return response()->json(["redirect" => route("employee.requests.index")]);
 	}
 
 	public function getUpdate(ModelsRequest $model)
 	{
-		return $model->items->map(function ($row) {
-			return [
-				"image" => asset("assets/images/add-item.png"),
-				"item_id" => $row->item_id,
-				"name" => $row->item->name,
-				"brand" => $row->item->brand,
-				"quantity" => $row->quantity,
-				"max" => $row->item->quantity,
-				"disabled" => $row->item->isEquipment(),
-				"color" => "bg-" . $row->item->itemColor(),
-				"text" => $row->item->itemType(),
-			];
-		});
+		return response()->json([
+			"editable" => $model->isPending(),
+			"data" => $model->items->map(function ($row) {
+				return [
+					"image" => asset("assets/images/add-item.png"),
+					"item_id" => $row->item_id,
+					"name" => $row->item->name,
+					"brand" => $row->item->brand,
+					"quantity" => $row->quantity,
+					"max" => $row->item->isEquipment() ? $row->item->quantity : $row->item->quantity(),
+					"disabled" => $row->item->isEquipment(),
+					"color" => "bg-" . $row->item->itemColor(),
+					"text" => $row->item->itemType(),
+				];
+			})
+		]);
 	}
 
 	public function edit(ModelsRequest $model, Request $request)
@@ -206,7 +220,9 @@ class RequestController extends Controller
 			}
 		}
 		if ($model->isToReturn()) {
-			$items = EmployeeItem::myItem()->working();
+			$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+				$query->where("item_type", Item::EQUIPMENT);
+			});
 			if ($search) {
 				$items->whereHas("item", function ($query) use ($search) {
 					$query->where("name", "like", "%$search%");
@@ -217,13 +233,15 @@ class RequestController extends Controller
 		$items = $items->latest()->take($search ? null : 10)->get();
 
 		if ($model->isToBarrow()) {
-			return $items->map(function ($item) {
+			return $items->filter(function ($item) {
+				return $item->quantity() > 0;
+			})->map(function ($item) {
 				return [
 					"image" => asset("assets/images/add-item.png"),
 					"id" => $item->id,
 					"name" => $item->name,
 					"brand" => $item->brand,
-					"quantity" => $item->quantity,
+					"quantity" => $item->isEquipment() ? $item->quantity : $item->quantity(),
 					"disabled" => $item->isEquipment(),
 					"color" => "bg-" . $item->itemColor(),
 					"text" => $item->itemType(),
@@ -249,7 +267,7 @@ class RequestController extends Controller
 					"name" => $row->item->name,
 					"brand" => $row->item->brand,
 					"quantity" => $row->quantity,
-					"max" => $row->item->quantity,
+					"max" => $row->item->isEquipment() ? $row->item->quantity : $row->item->quantity(),
 					"disabled" => $row->item->isEquipment(),
 					"color" => "bg-" . $row->item->itemColor(),
 					"text" => $row->item->itemType(),
@@ -274,6 +292,8 @@ class RequestController extends Controller
 				["quantity" => $item["quantity"]]
 			);
 		}
+
+		Session::flash("success", ["Request Updated", "You have successfully updated your requests."]);
 
 		return response()->json(["redirect" => route("employee.requests.index")]);
 	}

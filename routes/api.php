@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\BarrowController;
+use App\Http\Controllers\Api\Admin\RepairReturnController;
 use App\Http\Controllers\Api\RequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,6 +38,11 @@ Route::middleware("auth")->as("api.admin.")->group(function () {
 			Route::get("{request}/{item}/check", "checkItem");
 			Route::post("{model}/accept", "accept");
 			Route::patch("{model}/reject", "reject");
+		});
+		Route::prefix("repair-returned")->controller(RepairReturnController::class)->group(function () {
+			Route::get("{request}", "index")->name("requests.repair.returned.index");
+			Route::post("{model}/accept", "store");
+			Route::patch("{model}/reject", "update");
 		});
 	});
 });

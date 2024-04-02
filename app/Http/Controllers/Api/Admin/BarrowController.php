@@ -109,12 +109,16 @@ class BarrowController extends Controller
 				}
 				// 2 is for accepted items
 				if ($item["status"] === 2) {
-					DB::table("employee_items")->insert([
+					DB::table("employee_items")->updateOrInsert([
 						"employee_id" => $model->employee_id,
 						"item_id" => $item["item_id"],
+					], [
 						"quantity" => $item["quantity"],
 						"created_at" => Carbon::now(),
+						"returned_at" => null,
+						"status" => EmployeeItem::ON_HAND,
 					]);
+
 					DB::table("item_histories")->insert([
 						"employee_id" => $model->employee_id,
 						"item_id" => $item["item_id"],

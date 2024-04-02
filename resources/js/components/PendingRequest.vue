@@ -1,7 +1,27 @@
 <script setup>
 import { computed, onMounted, ref } from "vue";
+import { QrcodeStream } from "qrcode-reader-vue3";
+import useQrcode from "../composables/useQrcode"
 
 	const props = defineProps(["api"]);
+
+	const { 
+		camera, 
+		qrLoading,
+		qrError,
+		qrStatus,
+		qrStatusColor,
+		onInit, openCamera, offCamera } = useQrcode();
+
+	const onDecode = (content) => {
+		qrError.value = "";
+		qrStatus.value = "Reading...";
+		const index = form.value.findIndex(item => item.item_id == content)
+		if (index !== -1) {
+			const id = form.value[index].id;
+			checkItem(id, index);
+		}
+	}
 
 	const form = ref([]);
 	const checkLoading = ref(false);
@@ -64,15 +84,21 @@ import { computed, onMounted, ref } from "vue";
 		}, 0);
 	})
 
+	const hasPending = computed(() => {
+		return form.value.some(item => item.status === 1);
+	})
+
 	const accept = () => {
-		submitLoading.value = true;
-		axios.post(props.api + "/accept", {form: form.value})
-		.then((response) => {
-			submitLoading.value = false;
-			if (response.status === 200) {
-				window.location.assign(response.data.redirect)
-			}
-		})
+		if (!hasPending.value) {
+			submitLoading.value = true;
+			axios.post(props.api + "/accept", {form: form.value})
+			.then((response) => {
+				submitLoading.value = false;
+				if (response.status === 200) {
+					window.location.assign(response.data.redirect)
+				}
+			})
+		}
 	}
 
 	const reject = () => {
@@ -202,14 +228,14 @@ import { computed, onMounted, ref } from "vue";
 								<div>
 									<vue-ladda 
 										@click="reject" 
-										button-class="btn btn-sm btn-outline-danger waves-effect waves-light me-2" 
+										button-class="btn btn-sm btn-danger waves-effect waves-light me-2" 
 										data-style="slide-left" :loading="submitLoading"
 									>
 										Reject Request
 									</vue-ladda>
 									<vue-ladda 
 										@click="accept" 
-										button-class="btn btn-sm btn-outline-success waves-effect waves-light" 
+										button-class="btn btn-sm btn-success waves-effect waves-light" 
 										data-style="slide-left" :loading="submitLoading"
 									>
 										Accept Request
@@ -239,5 +265,59 @@ import { computed, onMounted, ref } from "vue";
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="modal fade" id="add" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+									<div class="col-6">
+										<qrcode-stream
+											:camera="camera"
+											@decode="onDecode"
+											@init="onInit"
+										>
+											<div v-if="qrLoading" class="qrcode-reading">
+													<i class="mdi mdi-camera mdi-18px"></i>
+													<p class="text-primary">Turning camera on...</p>
+											</div>
+											<div v-if="camera == 'off'" class="qrcode-reading">
+												<i class="mdi mdi-camera-off mdi-18px"></i>
+													<p :class="qrStatusColor">{{ qrStatus }}</p>
+											</div>
+										</qrcode-stream>
+										<div v-if="qrError != ''" class="alert alert-danger" role="alert">
+											<i class="mdi mdi-block-helper me-2"></i>
+                        {{ qrError }}
+                    </div>
+									</div>
+									<div class="col-6">
+										<div class="border rounded p-5 text-center">
+											<img src="/assets/images/delivery.png" alt="Delivery Image" height="100" v-if="!isStartCheck">
+											<div v-else>
+												<div v-if="checkLoading">
+													<div class="d-flex justify-content-center">
+														<div class="spinner-border avatar-lg" role="status"></div>
+													</div>
+													<h5 class="text-dark mb-0 mt-3">Please wait...</h5>
+												</div>
+												<div v-else>
+													<span :class="checkResponse.icon"></span>
+													<h5 class="fw-bold text-dark my-0">{{ checkResponse.title }}</h5>
+													<p class="mb-0" v-if="checkResponse.sub_title">{{ checkResponse.sub_title }}</p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+            </div>
+            <div class="modal-footer">
+							<button @click="openCamera" type="button" class="btn btn-primary">Camera On</button>
+              <button @click="offCamera" type="button" class="btn btn-danger mx-1">Camera Off</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 	</div>
 </template>

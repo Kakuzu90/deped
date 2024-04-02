@@ -34,9 +34,16 @@ class RequestController extends Controller
 	}
 	public function barrow(ModelsRequest $request)
 	{
-		// if (!$request->isToBarrow() || !$request->isPending()) {
-		// 	abort(404);
-		// }
+		if (!$request->isToBarrow() || !$request->isPending()) {
+			abort(404);
+		}
 		return view("admin.request.barrow", compact("request"));
+	}
+	public function repairReturned(ModelsRequest $request)
+	{
+		if ($request->isToBarrow() || !$request->isPending()) {
+			abort(404);
+		}
+		return view("admin.request.return-repair", compact("request"));
 	}
 }

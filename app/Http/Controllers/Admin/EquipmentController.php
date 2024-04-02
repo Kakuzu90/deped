@@ -63,6 +63,8 @@ class EquipmentController extends Controller
 			"status" => "required|numeric"
 		]);
 
+		$isRepair = $equipment->isRepair();
+
 		$equipment->update([
 			"name" => $request->name,
 			"serial_no" => $request->serial,

@@ -60,10 +60,18 @@ class Item extends Model
 		return $this->hasMany(EmployeeItem::class);
 	}
 
+	public function histories()
+	{
+		return $this->hasMany(ItemHistory::class);
+	}
+
 	public function quantity()
 	{
 		$calculate = $this->quantity - $this->equipItems()->sum("quantity");
-		return $calculate > 0 ? $calculate : 0;
+		if ($this->isSupply()) {
+			return $calculate > 0 ? $calculate : 0;
+		}
+		return $this->quantity;
 	}
 
 	public function scopeEquipment($query)

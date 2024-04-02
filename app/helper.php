@@ -48,3 +48,10 @@ if (!function_exists("getDefective")) {
 		return Item::equipment()->defective()->count();
 	}
 }
+
+if (!function_exists("isOdd")) {
+	function isOdd(int $n)
+	{
+		return $n % 2 === 0 ? "timeline-item timeline-item-left" : "timeline-item";
+	}
+}

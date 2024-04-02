@@ -94,10 +94,31 @@
                                         <th>Item Code</th>
                                         <th class="text-center">Item Name</th>
                                         <th class="text-center">Item Type</th>
+                                        <th class="text-center">Quantity</th>
                                         <th class="text-center">Date Received</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+																	@foreach ($employee->onHand as $item)
+																			<tr>
+																				<td>
+																					<span class="fw-bold text-primary">{{ $item->item_id }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="text-dark">{{ $item->item->name }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="badge p-1 bg-{{ $item->item->itemColor() }}">{{ $item->item->itemType() }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="fw-bold text-dark">{{ $item->quantity }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="text-dark">{{ $item->created_at->format("F d, Y") }}</span>
+																				</td>
+																			</tr>
+																	@endforeach
+																</tbody>
                             </table>
                         </div>
                     </div>
@@ -112,7 +133,24 @@
                                         <th class="text-center">Date Returned</th>
                                     </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+																	@foreach ($employee->returned as $item)
+																			<tr>
+																				<td>
+																					<span class="fw-bold text-primary">{{ $item->item_id }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="text-dark">{{ $item->item->name }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="badge p-1 bg-{{ $item->item->itemColor() }}">{{ $item->item->itemType() }}</span>
+																				</td>
+																				<td class="text-center">
+																					<span class="text-dark">{{ $item->returned_at->format("F d, Y") }}</span>
+																				</td>
+																			</tr>
+																	@endforeach
+																</tbody>
                             </table>
                         </div>
                     </div>
@@ -132,7 +170,7 @@
     <script>
         $(document).ready(function(){
             $("#datatable").DataTable({
-                order: [[3, "desc"]]
+                order: [[4, "desc"], [2, "asc"]]
             })
             $("#datatable1").DataTable({
                 order: [[3, "desc"]]

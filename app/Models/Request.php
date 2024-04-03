@@ -49,12 +49,12 @@ class Request extends Model
 
 	public function acceptedBy()
 	{
-		return $this->belongsTo(Admin::class)->withoutGlobalScope(Deleted::class);
+		return $this->belongsTo(Admin::class, "accepted_by", "id")->withoutGlobalScope(Deleted::class);
 	}
 
 	public function releasedBy()
 	{
-		return $this->belongsTo(Admin::class)->withoutGlobalScope(Deleted::class);
+		return $this->belongsTo(Admin::class, "released_by", "id")->withoutGlobalScope(Deleted::class);
 	}
 
 	public function scopeMyRequest($query)

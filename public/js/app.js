@@ -20663,18 +20663,32 @@ var itemsPerPage = 6;
       });
       if (index !== -1) {
         var id = form.value[index].id;
-        checkItem(id, index);
+        checkItemm(id, index);
       }
     };
     var form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)([]);
     var checkLoading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var checkLoadingm = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var submitLoading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var isStartCheck = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
     var checkResponse = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({});
+    var isStartCheckm = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(false);
+    var checkResponsem = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)({});
     var currentPage = (0,vue__WEBPACK_IMPORTED_MODULE_0__.ref)(1);
     var getLists = function getLists() {
       axios.get(props.api).then(function (response) {
         form.value = response.data;
+      });
+    };
+    var checkItemm = function checkItemm(id, index) {
+      if (!isStartCheckm.value) {
+        isStartCheckm.value = true;
+      }
+      checkLoadingm.value = true;
+      axios.get(props.api + "/" + id + "/check").then(function (response) {
+        checkLoadingm.value = false;
+        form.value[index].status = response.data.item_status;
+        checkResponsem.value = response.data;
       });
     };
     var checkItem = function checkItem(id, index) {
@@ -20778,12 +20792,16 @@ var itemsPerPage = 6;
       onDecode: onDecode,
       form: form,
       checkLoading: checkLoading,
+      checkLoadingm: checkLoadingm,
       submitLoading: submitLoading,
       isStartCheck: isStartCheck,
       checkResponse: checkResponse,
+      isStartCheckm: isStartCheckm,
+      checkResponsem: checkResponsem,
       itemsPerPage: itemsPerPage,
       currentPage: currentPage,
       getLists: getLists,
+      checkItemm: checkItemm,
       checkItem: checkItem,
       handleInput: handleInput,
       rowBg: rowBg,
@@ -21924,9 +21942,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.qrStatus), 3 /* TEXT, CLASS */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
     _: 1 /* STABLE */
-  }, 8 /* PROPS */, ["camera", "onInit"]), $setup.qrError != '' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_56, [_hoisted_57, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.qrError), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_58, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_59, [!$setup.isStartCheck ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", _hoisted_60)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_61, [$setup.checkLoading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_62, [].concat(_hoisted_65))) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_66, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
-    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.checkResponse.icon)
-  }, null, 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_67, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.checkResponse.title), 1 /* TEXT */), $setup.checkResponse.sub_title ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_68, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.checkResponse.sub_title), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]))]))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_69, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, 8 /* PROPS */, ["camera", "onInit"]), $setup.qrError != '' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_56, [_hoisted_57, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.qrError), 1 /* TEXT */)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_58, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_59, [!$setup.isStartCheckm ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", _hoisted_60)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_61, [$setup.checkLoadingm ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_62, [].concat(_hoisted_65))) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_66, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($setup.checkResponsem.icon)
+  }, null, 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h5", _hoisted_67, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.checkResponsem.title), 1 /* TEXT */), $setup.checkResponsem.sub_title ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_68, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($setup.checkResponsem.sub_title), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]))]))])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_69, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     onClick: _cache[0] || (_cache[0] = function () {
       return $setup.openCamera && $setup.openCamera.apply($setup, arguments);
     }),

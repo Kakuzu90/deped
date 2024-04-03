@@ -85,7 +85,17 @@
 															<span>{{ $item->created_at->format("F d, Y") }}</span>
 														</td>
 														<td class="text-center">
-															
+															@if ($item->isToBarrow())
+															<a href="{{ route("admin.requests.generate", $item->id) }}" 
+																class="action-icon">
+																<i class="mdi mdi-printer"></i>
+															</a>
+															@else
+															<a href="javascript:void(0);" 
+																class="action-icon">
+																<i class="mdi mdi-printer-off"></i>
+															</a>
+															@endif
 														</td>
 													</tr>
 													@endforeach

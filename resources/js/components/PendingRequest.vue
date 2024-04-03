@@ -19,15 +19,18 @@ import useQrcode from "../composables/useQrcode"
 		const index = form.value.findIndex(item => item.item_id == content)
 		if (index !== -1) {
 			const id = form.value[index].id;
-			checkItem(id, index);
+			checkItemm(id, index);
 		}
 	}
 
 	const form = ref([]);
 	const checkLoading = ref(false);
+	const checkLoadingm = ref(false);
 	const submitLoading = ref(false);
 	const isStartCheck = ref(false);
 	const checkResponse = ref({});
+	const isStartCheckm = ref(false);
+	const checkResponsem = ref({});
 	const itemsPerPage = 6;
 	const currentPage = ref(1);
 
@@ -35,6 +38,19 @@ import useQrcode from "../composables/useQrcode"
 		axios.get(props.api)
 			.then((response) => {
 				form.value = response.data;
+			})
+	}
+
+	const checkItemm = (id, index) => {
+		if (!isStartCheckm.value) {
+			isStartCheckm.value = true;
+		}
+		checkLoadingm.value = true;
+		axios.get(props.api + "/" + id + "/check")
+			.then((response) => {
+				checkLoadingm.value = false;
+				form.value[index].status = response.data.item_status;
+				checkResponsem.value = response.data;
 			})
 	}
 
@@ -294,18 +310,18 @@ import useQrcode from "../composables/useQrcode"
 									</div>
 									<div class="col-6">
 										<div class="border rounded p-5 text-center">
-											<img src="/assets/images/delivery.png" alt="Delivery Image" height="100" v-if="!isStartCheck">
+											<img src="/assets/images/delivery.png" alt="Delivery Image" height="100" v-if="!isStartCheckm">
 											<div v-else>
-												<div v-if="checkLoading">
+												<div v-if="checkLoadingm">
 													<div class="d-flex justify-content-center">
 														<div class="spinner-border avatar-lg" role="status"></div>
 													</div>
 													<h5 class="text-dark mb-0 mt-3">Please wait...</h5>
 												</div>
 												<div v-else>
-													<span :class="checkResponse.icon"></span>
-													<h5 class="fw-bold text-dark my-0">{{ checkResponse.title }}</h5>
-													<p class="mb-0" v-if="checkResponse.sub_title">{{ checkResponse.sub_title }}</p>
+													<span :class="checkResponsem.icon"></span>
+													<h5 class="fw-bold text-dark my-0">{{ checkResponsem.title }}</h5>
+													<p class="mb-0" v-if="checkResponsem.sub_title">{{ checkResponsem.sub_title }}</p>
 												</div>
 											</div>
 										</div>

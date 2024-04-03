@@ -90,10 +90,17 @@
 								<span>{{ $item->created_at->format("F d, Y") }}</span>
 							</td>
 							<td class="text-center">
-								<a href="" 
+								@if ($item->isToBarrow())
+								<a href="{{ route("admin.requests.barrow", $item->id) }}" 
 									class="action-icon">
 									<i class="mdi mdi-eye-plus"></i>
 								</a>
+								@else
+								<a href="{{ route("admin.requests.repair.returned", $item->id) }}" 
+									class="action-icon">
+									<i class="mdi mdi-eye-plus"></i>
+								</a>
+								@endif
 							</td>
 						</tr>
 					@empty

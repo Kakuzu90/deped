@@ -99,6 +99,7 @@ Route::prefix("admin")
 				Route::get("rejected", "rejected")->name("rejected");
 				Route::get("pending/{request}", "barrow")->name("barrow");
 				Route::get("return-or-repair/{request}", "repairReturned")->name("repair.returned");
+				Route::get("accepted/{request}/generate", "generate")->name("generate");
 			});
 			Route::controller(ProfileController::class)->group(function () {
 				Route::get("my-profile", "index")->name("profile");

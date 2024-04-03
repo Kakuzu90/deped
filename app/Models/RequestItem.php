@@ -56,4 +56,14 @@ class RequestItem extends Model
 
 		return "danger";
 	}
+
+	public function isAccepted()
+	{
+		return $this->status === RequestItem::ACCEPTED;
+	}
+
+	public function isRejected()
+	{
+		return $this->status === RequestItem::REJECTED;
+	}
 }

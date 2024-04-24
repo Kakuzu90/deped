@@ -58,38 +58,59 @@ class RequestController extends Controller
 			"form" => "required|array"
 		]);
 
-		$model = ModelsRequest::create([
-			"employee_id" => $employee->id,
-			"request_type" => ModelsRequest::TO_BARROW,
-			"accepted_by" => Auth::id(),
-			"released_by" => Auth::id(),
-			"accepted_at" => Carbon::now(),
-			"released_at" => Carbon::now(),
-			"status" => ModelsRequest::ACCEPTED
-		]);
-
 		DB::beginTransaction();
 
 		try {
+			$modelID = DB::table("requests")->insertGetId([
+				"employee_id" => $employee->id,
+				"request_type" => ModelsRequest::TO_BARROW,
+				"accepted_by" => Auth::id(),
+				"released_by" => Auth::id(),
+				"accepted_at" => Carbon::now(),
+				"released_at" => Carbon::now(),
+				"status" => ModelsRequest::ACCEPTED
+			]);
+
 			foreach ($request->form as $item) {
 				DB::table("request_items")->insert([
-					"request_id" => $model->id,
+					"request_id" => $modelID,
 					"item_id" => $item["item_id"],
 					"quantity" => $item["quantity"],
 				]);
 
-				DB::table("employee_items")->updateOrInsert([
-					"employee_id" => $model->employee_id,
+				$owned = DB::table("employee_items")->where([
+					"employee_id" => $employee->id,
 					"item_id" => $item["item_id"],
-				], [
-					"quantity" => $item["quantity"],
-					"created_at" => Carbon::now(),
-					"returned_at" => null,
-					"status" => EmployeeItem::ON_HAND,
-				]);
+				])->first();
+
+				if ($owned) {
+					$itemModel = Item::find($item["item_id"]);
+					$quantity = $item["quantity"];
+					if ($itemModel->isSupply()) {
+						$quantity += $owned->quantity;
+					}
+					DB::table("employee_items")->where([
+						"employee_id" => $employee->id,
+						"item_id" => $item["item_id"],
+					])->update([
+						"quantity" => $quantity,
+						"created_at" => Carbon::now(),
+						"returned_at" => null,
+						"status" => EmployeeItem::ON_HAND,
+					]);
+				} else {
+					DB::table("employee_items")->insert([
+						"employee_id" => $employee->id,
+						"item_id" => $item["item_id"],
+						"quantity" => $item["quantity"],
+						"created_at" => Carbon::now(),
+						"returned_at" => null,
+						"status" => EmployeeItem::ON_HAND,
+					]);
+				}
 
 				DB::table("item_histories")->insert([
-					"employee_id" => $model->employee_id,
+					"employee_id" => $employee->id,
 					"item_id" => $item["item_id"],
 					"quantity" => $item["quantity"],
 					"type" => 1,

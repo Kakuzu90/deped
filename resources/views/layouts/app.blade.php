@@ -51,13 +51,13 @@
                     <li class="menu-item">
                         <a href="{{ route("admin.positions.index") }}" class="menu-link">
                             <span class="menu-icon"><i class="mdi mdi-offer"></i></span>
-                            <span class="menu-text"> Positions </span>
+                            <span class="menu-text"> Position </span>
                         </a>
                     </li>
                     <li class="menu-item">
                         <a href="{{ route("admin.offices.index") }}" class="menu-link">
                             <span class="menu-icon"><i class="mdi mdi-office-building-marker"></i></span>
-                            <span class="menu-text"> Offices </span>
+                            <span class="menu-text"> Office </span>
                         </a>
                     </li>
                     <li class="menu-title">User</li>
@@ -69,43 +69,17 @@
                     </li>
                     <li class="menu-title">Inventory</li>
                     <li class="menu-item">
-                        <a href="{{ route("admin.supplies.index") }}" class="menu-link">
+                        <a href="{{ route("admin.items.index") }}" class="menu-link">
                             <span class="menu-icon"><i class="mdi mdi-box-shadow"></i></span>
-                            <span class="menu-text"> Supplies </span>
-                        </a>
-                    </li>
-                    <li class="menu-item">
-                        <a href="{{ route("admin.equipments.index") }}" class="menu-link">
-                            <span class="menu-icon"><i class="mdi mdi-tools"></i></span>
-                            <span class="menu-text"> Equipments </span>
+                            <span class="menu-text"> Items </span>
                         </a>
                     </li>
                     <li class="menu-title">Transaction</li>
                     <li class="menu-item">
-                        <a href="#request-menu" class="menu-link" data-bs-toggle="collapse">
+                        <a href="#" class="menu-link">
 													<span class="menu-icon"><i class="mdi mdi-clipboard-account"></i></span>
 													<span class="menu-text"> Requests </span>
-													<span class="menu-arrow"></span>
 												</a>
-												<div class="collapse" id="request-menu">
-													<ul class="sub-menu">
-														<li class="menu-item">
-																<a href="{{ route("admin.requests.index") }}" class="menu-link">
-																		<span class="menu-text">Pending</span>
-																</a>
-														</li>
-														<li class="menu-item">
-															<a href="{{ route("admin.requests.accepted") }}" class="menu-link">
-																	<span class="menu-text">Accepted</span>
-															</a>
-													</li>
-													<li class="menu-item">
-														<a href="{{ route("admin.requests.rejected") }}" class="menu-link">
-																<span class="menu-text">Rejected</span>
-														</a>
-												</li>
-													</ul>
-												</div>
                     </li>
                 </ul>
                 <div class="clearfix"></div>

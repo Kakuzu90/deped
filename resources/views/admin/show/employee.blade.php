@@ -72,89 +72,81 @@
     <div class="col-xl-9 col-lg-9">
         <div class="card">
             <div class="card-body">
-                <ul class="nav nav-pills navtab-bg nav-justified">
-                    <li class="nav-item">
-                        <a href="#onhand" data-bs-toggle="tab" aria-expanded="true" class="nav-link active">
-                            On-Hand
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#returned" data-bs-toggle="tab" aria-expanded="false" class="nav-link">
-                            Returned
-                        </a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <div class="tab-pane show active" id="onhand">
-                        <div class="table-responsive">
-                            <table class="table table-hover m-0" id="datatable">
-                                <thead>
-                                    <tr>
-                                        <th>Item Code</th>
-                                        <th class="text-center">Item Name</th>
-                                        <th class="text-center">Item Type</th>
-                                        <th class="text-center">Quantity</th>
-                                        <th class="text-center">Date Received</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-																	@foreach ($employee->onHand as $item)
-																			<tr>
-																				<td>
-																					<span class="fw-bold text-primary">{{ $item->item_id }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="text-dark">{{ $item->item->name }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="badge p-1 bg-{{ $item->item->itemColor() }}">{{ $item->item->itemType() }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="fw-bold text-dark">{{ $item->quantity }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="text-dark">{{ $item->created_at->format("F d, Y") }}</span>
-																				</td>
-																			</tr>
-																	@endforeach
-																</tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="returned">
-                        <div class="table-responsive">
-                            <table class="table table-hover m-0" id="datatable1">
-                                <thead>
-                                    <tr>
-                                        <th>Item Code</th>
-                                        <th class="text-center">Item Name</th>
-                                        <th class="text-center">Item Type</th>
-                                        <th class="text-center">Date Returned</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-																	@foreach ($employee->returned as $item)
-																			<tr>
-																				<td>
-																					<span class="fw-bold text-primary">{{ $item->item_id }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="text-dark">{{ $item->item->name }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="badge p-1 bg-{{ $item->item->itemColor() }}">{{ $item->item->itemType() }}</span>
-																				</td>
-																				<td class="text-center">
-																					<span class="text-dark">{{ $item->returned_at->format("F d, Y") }}</span>
-																				</td>
-																			</tr>
-																	@endforeach
-																</tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+							<div class="btn-group dropstart float-end">
+								<button type="button" class="btn btn-blue waves-effect waves-light dropdown-toggle"
+									data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+								>
+									<i class="mdi mdi-chevron-left"></i> Make Request
+								</button>
+								<div class="dropdown-menu">
+									<a href="{{ route("admin.requests.create", $employee->id) }}" class="dropdown-item">
+										New Request 
+									</a>
+									<div class="dropdown-divider"></div>
+									<a href="{{ route("admin.requests.repair", $employee->id) }}" class="dropdown-item">
+										Repair Request
+									</a>
+									<a href="{{ route("admin.requests.returned", $employee->id) }}" class="dropdown-item">
+										Return Request
+									</a>
+								</div>
+							</div>
+							<h4 class="header-title mb-4">Manage Requests</h4>
+							<div class="table-responsive">
+								<table class="table table-hover m-0 table-centered" id="datatable">
+									<thead>
+										<tr>
+											<th>Item</th>
+											<th class="text-center">Brand</th>
+											<th class="text-center">Quantity</th>
+											<th class="text-center">Item Type</th>
+											<th class="text-center">Date Received</th>
+											<th class="text-center">Date Returned</th>
+											<th class="text-center">Item Status</th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach ($employee->items as $item)
+											<tr>
+												<td>
+													<div class="d-flex flex-column">
+														<span class="text-primary fw-semibold">
+															<b class="text-dark">Stock No. </b>
+															{{ $item->item->stock_no }}
+														</span>
+														<span>
+															<b class="text-dark">Description </b>
+															{{ $item->item->name }}
+														</span>
+														<span>
+															<b class="text-dark">Unit </b>
+															{{ $item->item->unit }}
+														</span>
+													</div>
+												</td>
+												<td class="text-center">
+													<span>{{ $item->item->brand }}</span>
+												</td>
+												<td class="text-center">
+													<span class="text-danger fw-semibold">{{ $item->quantity }}</span>
+												</td>
+												<td class="text-center">
+													<span class="badge py-1 bg-{{ $item->item->itemColor() }}">{{ $item->item->itemType() }}</span>
+												</td>
+												<td class="text-center">
+													<span class="text-dark">{{ $item->created_at->format("F d, Y") }}</span>
+												</td>
+												<td class="text-center">
+													<span class="text-dark">{{ is_null($item->returned_at) ? "-" :$item->returned_at->format("F d, Y") }}</span>
+												</td>
+												<td class="text-center">
+													<span class="badge py-1 bg-{{ $item->statusColor() }}">{{ $item->statusText() }}</span>
+												</td>
+											</tr>
+										@endforeach
+									</tbody>
+								</table>
+							</div>
             </div>
         </div>
     </div>
@@ -170,14 +162,8 @@
     <script>
         $(document).ready(function(){
             $("#datatable").DataTable({
-                order: [[4, "desc"], [2, "asc"]]
+                order: [[6, "asc"], [3, "asc"]]
             })
-            $("#datatable1").DataTable({
-                order: [[3, "desc"]]
-            })
-            $(".dataTables_length select").addClass("form-select")
-            $(".dataTables_length select").removeClass("custom-select custom-select-sm")
-            $(".dataTables_length label").addClass("form-label")
         })
     </script>
 @endsection

@@ -33,6 +33,8 @@
 		if (!isInArray) {
 			const temp = {
 				image: item.image,
+				stock: item.stock,
+				unit: item.unit,
 				item_id: item.id,
 				name: item.name,
 				brand: item.brand,
@@ -121,7 +123,10 @@
 												<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 												<br>
 												<small class="me-2">
-													<b>Code: </b> {{ item.item_id }}
+													<b>Stock No.: </b> {{ item.stock }}
+												</small>
+												<small>
+													<b>Unit: </b> {{ item.unit }}
 												</small>
 											</p>
 										</td>
@@ -178,12 +183,15 @@
 									<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 									<br>
 									<small class="me-2">
-										<b>Code: </b> {{ item.id }}
+										<b>Stock No.: </b> {{ item.stock }}
 									</small>
 									<small>
 										<b>Brand: </b> {{ item.brand }}
 									</small>
 									<br>
+									<small>
+										<b>Unit: </b> {{ item.unit }}
+									</small>
 								</p>
 							</li>
 						</ul>

@@ -17,32 +17,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware("auth:employee")->as("api.employee.")->group(function () {
-	Route::prefix("requests")->controller(RequestController::class)->group(function () {
-		Route::get("new", "getNew");
-		Route::get("repair", "getRepair");
-		Route::get("return", "getReturn");
-		Route::get("items/{model}", "getUpdate")->name("requests.update");
-		Route::get("items/{model}/inventory", "edit");
-		Route::post("new/store", "storeNew");
-		Route::post("repair/store", "storeRepair");
-		Route::post("return/store", "storeReturn");
-		Route::post("items/{model}/update", "update");
-	});
-});
+// Route::middleware("auth:employee")->as("api.employee.")->group(function () {
+// 	Route::prefix("requests")->controller(RequestController::class)->group(function () {
+// 		Route::get("new", "getNew");
+// 		Route::get("repair", "getRepair");
+// 		Route::get("return", "getReturn");
+// 		Route::get("items/{model}", "getUpdate")->name("requests.update");
+// 		Route::get("items/{model}/inventory", "edit");
+// 		Route::post("{employee}/new/store", "storeNew");
+// 		Route::post("repair/store", "storeRepair");
+// 		Route::post("return/store", "storeReturn");
+// 		Route::post("items/{model}/update", "update");
+// 	});
+// });
 
 Route::middleware("auth")->as("api.admin.")->group(function () {
 	Route::prefix("requests")->group(function () {
-		Route::prefix("barrow")->controller(BarrowController::class)->group(function () {
-			Route::get("{request}", "index")->name("requests.barrow.index");
-			Route::get("{request}/{item}/check", "checkItem");
-			Route::post("{model}/accept", "accept");
-			Route::patch("{model}/reject", "reject");
-		});
-		Route::prefix("repair-returned")->controller(RepairReturnController::class)->group(function () {
-			Route::get("{request}", "index")->name("requests.repair.returned.index");
-			Route::post("{model}/accept", "store");
-			Route::patch("{model}/reject", "update");
+		Route::controller(RequestController::class)->group(function () {
+			Route::get("new", "getNew");
+			Route::get("{employee}/repair", "getRepair");
+			Route::get("{employee}/return", "getReturn");
+			Route::get("items/{model}", "getUpdate")->name("requests.update");
+			Route::get("items/{model}/inventory", "edit");
+			Route::post("{employee}/new/store", "storeNew");
+			Route::post("{employee}/repair/store", "storeRepair");
+			Route::post("{employee}/return/store", "storeReturn");
+			Route::post("items/{model}/update", "update");
 		});
 	});
 });

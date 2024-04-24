@@ -21,10 +21,10 @@
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Deped</a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Informations</a></li>
-                    <li class="breadcrumb-item active">Offices</li>
+                    <li class="breadcrumb-item active">Office</li>
                 </ol>
             </div>
-            <h4 class="page-title">Offices</h4>
+            <h4 class="page-title">Office</h4>
         </div>
     </div>
 </div>
@@ -38,7 +38,7 @@
                 >
                     <i class="mdi mdi-plus-circle"></i> Add Office
                 </button>
-                <h4 class="header-title mb-4">Manage Offices</h4>
+                <h4 class="header-title mb-4">Manage Office</h4>
                 <div class="table-responsive">
                     <table class="table table-hover m-0" id="datatable">
                         <thead>

@@ -16,21 +16,9 @@ class Item extends Model
 	public const REPAIR = 2;
 	public const DEFECTIVE = 3;
 
-	public $incrementing = false;
-
-	public static function booted(): void
-	{
-		static::creating(function (Item $item) {
-			$item->id = str_pad(mt_rand(0, 99999999999), 11, '0', STR_PAD_LEFT);
-			while (Item::where("id", $item->id)->exists()) {
-				$item->id = str_pad(mt_rand(0, 99999999999), 11, '0', STR_PAD_LEFT);
-			}
-		});
-	}
-
 	protected $fillable = [
-		"id", "name", "serial_no", "description",
-		"model_no", "brand", "amount", "quantity",
+		"id", "name", "stock_no", "unit",
+		"place_origin", "brand", "amount", "quantity",
 		"item_type", "status", "purchased_at",
 		"deleted_at"
 	];
@@ -44,16 +32,6 @@ class Item extends Model
 		"purchased_at" => "date",
 		"deleted_at" => "date"
 	];
-
-	public function setNameAttribute($value)
-	{
-		return $this->attributes["name"] = strtolower($value);
-	}
-
-	public function getNameAttribute($value)
-	{
-		return $this->attributes["name"] = ucwords($value);
-	}
 
 	public function equipItems()
 	{

@@ -3,7 +3,7 @@ import { onMounted, ref, watch, computed } from "vue";
 import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 
-	const props = defineProps(["api"]);
+	const props = defineProps(["api", "id"]);
 
 	const search = ref("");
 	const lists = ref([]);
@@ -12,6 +12,10 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 	const btnLoading = ref(false);
 	const itemsPerPage = 6;
 	const currentPage = ref(1);
+
+	const storeApi = computed(() => {
+		return props.api + props.id + "/";
+	})
 
 	const getLists = () => {
 		axios.get(props.api + "new")
@@ -36,9 +40,12 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 				image: item.image,
 				item_id: item.id,
 				name: item.name,
+				stock: item.stock,
+				unit: item.unit,
 				quantity: 1,
 				max: item.quantity,
 				brand: item.brand,
+				amount: item.amount,
 				disabled: item.disabled,
 				color: item.color,
 				text: item.text,
@@ -69,7 +76,7 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 
 	const submit = () => {
 		btnLoading.value = true;
-		axios.post(props.api + "new/store", {form: form.value})
+		axios.post(storeApi.value + "new/store", {form: form.value})
 			.then((response) => {
 				btnLoading.value = false;
 				if (response.status === 200) {
@@ -96,6 +103,12 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 			currentPage.value++;
 		}
 	};
+
+	const totalAmount = computed(() => {
+		return form.value.reduce((total, item) => {
+			return total + (item.amount * item.quantity);
+		}, 0);
+	})
 
 	onMounted(() => {
 		getLists()
@@ -135,10 +148,17 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 												<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 												<br>
 												<small class="me-2">
-													<b>Code: </b> {{ item.item_id }}
+													<b>Stock No.: </b> {{ item.stock }}
 												</small>
 												<small>
 													<b>Brand: </b> {{ item.brand }}
+												</small>
+												<br>
+												<small class="me-2">
+													<b>Amount: </b> {{ item.amount }}
+												</small>
+												<small>
+													<b>Unit: </b> {{ item.unit }}
 												</small>
 											</p>
 										</td>
@@ -166,15 +186,20 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 							</table>
 						</div>
 					</div>
-					<div class="d-flex justify-content-between">
-						<div class="btn-group" v-if="totalPages > 0">
+					<div v-if="totalPages > 0" class="d-flex justify-content-between">
+						<div class="btn-group">
 							<button @click="prevPage" :disabled="currentPage === 1" type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Previous</button>
 							<button type="button" class="btn btn-sm btn-secondary">Page {{ currentPage }} of {{ totalPages }}</button>
 							<button @click="nextPage" :disabled="currentPage === totalPages" type="button" class="btn btn-sm btn-outline-light waves-effect waves-light">Next</button>
 						</div>
-						<vue-ladda @click="submit" button-class="btn btn-sm btn-blue waves-effect waves-light" data-style="slide-left" :loading="btnLoading">
-							<i class="mdi mdi-content-save-move"></i> Submit
-						</vue-ladda>
+						<div class="d-flex">
+							<h5 class="me-1">
+								<b>Total Amount:</b> <span>&#8369; {{ totalAmount }}</span>
+							</h5>
+							<vue-ladda @click="submit" button-class="btn btn-sm btn-blue waves-effect waves-light" data-style="slide-left" :loading="btnLoading">
+								<i class="mdi mdi-content-save-move"></i> Submit
+							</vue-ladda>
+						</div>
 					</div>
 				</div>
 
@@ -202,14 +227,17 @@ import { PerfectScrollbar } from "vue3-perfect-scrollbar";
 									<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 									<br>
 									<small class="me-2">
-										<b>Code: </b> {{ item.id }}
+										<b>Stock No.: </b> {{ item.stock }}
 									</small>
 									<small>
 										<b>Brand: </b> {{ item.brand }}
 									</small>
 									<br>
-									<small>
+									<small class="me-2">
 										<b>Quantity: </b> {{ item.quantity }}
+									</small>
+									<small>
+										<b>Unit: </b> {{ item.unit }}
 									</small>
 								</p>
 							</li>

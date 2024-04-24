@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EmployeeController as AdminEmployeeController;
 use App\Http\Controllers\Admin\EquipmentController;
+use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\OfficeController;
 use App\Http\Controllers\Admin\PositionController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -86,21 +87,18 @@ Route::prefix("admin")
 			Route::get("dashboard", DashboardController::class)->name("dashboard");
 			Route::apiResource("offices", OfficeController::class);
 			Route::apiResource("positions", PositionController::class);
+
+			Route::get("employees/{employee}/request-new", [RequestController::class, "create"])->name("requests.create");
+			Route::get("employees/{employee}/request-repair", [RequestController::class, "repair"])->name("requests.repair");
+			Route::get("employees/{employee}/request-returned", [RequestController::class, "returned"])->name("requests.returned");
+
 			Route::get("employees/{employee}/profile", [AdminEmployeeController::class, "profile"])->name("employees.profile");
 			Route::patch("employees/{employee}/account", [AdminEmployeeController::class, "account"])->name("employees.profile.account");
 			Route::apiResource("employees", AdminEmployeeController::class);
-			Route::get("supplies/{item}/history", [SupplyController::class, "history"])->name("supplies.history");
-			Route::apiResource("supplies", SupplyController::class);
-			Route::get("equipments/{item}/history", [EquipmentController::class, "history"])->name("equipments.history");
-			Route::apiResource("equipments", EquipmentController::class);
-			Route::controller(RequestController::class)->prefix("requests")->as("requests.")->group(function () {
-				Route::get("pending", "index")->name("index");
-				Route::get("accepted", "accepted")->name("accepted");
-				Route::get("rejected", "rejected")->name("rejected");
-				Route::get("pending/{request}", "barrow")->name("barrow");
-				Route::get("return-or-repair/{request}", "repairReturned")->name("repair.returned");
-				Route::get("accepted/{request}/generate", "generate")->name("generate");
-			});
+
+			Route::get("items/{item}/histories", [InventoryController::class, "history"])->name("items.history");
+			Route::apiResource("items", InventoryController::class);
+
 			Route::controller(ProfileController::class)->group(function () {
 				Route::get("my-profile", "index")->name("profile");
 				Route::put("my-profile", "general")->name("profile.general");

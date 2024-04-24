@@ -43,9 +43,9 @@ class EmployeeItem extends Model
 		return $this->belongsTo(Item::class)->withoutGlobalScope(Deleted::class);
 	}
 
-	public function scopeMyItem($query)
+	public function scopeMyItem($query, $id)
 	{
-		return $query->where("employee_id", Auth::guard("employee")->id());
+		return $query->where("employee_id", $id);
 	}
 
 	public function scopeRepair($query)

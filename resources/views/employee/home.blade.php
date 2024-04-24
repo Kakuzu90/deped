@@ -126,7 +126,6 @@
 									@else
 									<h4 class="text-dark my-3">No Items Available</h4>
 									@endisset	
-									<a href="{{ route("employee.requests.index") }}" class="btn btn-sm btn-blue">Make Request</a>
 								</div>
 							</div>
 						</div>

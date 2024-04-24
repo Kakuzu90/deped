@@ -19,7 +19,6 @@ class DashboardController extends Controller
 			"employee" =>  Employee::count(),
 			"equipment" => Item::equipment()->count(),
 			"supply" => Item::supply()->count(),
-			"requests" => Request::pending()->latest()->get(),
 		];
 		return view("admin.dashboard", compact("data"));
 	}

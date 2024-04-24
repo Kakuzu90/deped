@@ -16,7 +16,7 @@
                 <ol class="breadcrumb m-0">
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Deped</a></li>
                     <li class="breadcrumb-item"><a href="javascript: void(0);">Inventory</a></li>
-                    <li class="breadcrumb-item active">{{ $item->id }}</li>
+                    <li class="breadcrumb-item active">{{ $item->name }}</li>
                 </ol>
             </div>
             <h4 class="page-title">History of {{ $item->name }}</h4>

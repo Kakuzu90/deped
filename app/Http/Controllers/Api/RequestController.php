@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Resources\PendingResource;
-use App\Models\EmployeeItem;
 use App\Models\Item;
-use App\Models\Request as ModelsRequest;
+use App\Models\Employee;
+use App\Models\ItemHistory;
 use App\Models\RequestItem;
+use App\Models\EmployeeItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\PendingResource;
 use Illuminate\Support\Facades\Session;
+use App\Models\Request as ModelsRequest;
 
 class RequestController extends Controller
 {
@@ -35,8 +39,11 @@ class RequestController extends Controller
 			return [
 				"image" => asset("assets/images/add-item.png"),
 				"id" => $item->id,
+				"stock" => $item->stock_no,
+				"unit" => $item->unit,
 				"name" => $item->name,
 				"brand" => $item->brand,
+				"amount" => $item->amount,
 				"quantity" => $item->isEquipment() ? $item->quantity : $item->quantity(),
 				"disabled" => $item->isEquipment(),
 				"color" => "bg-" . $item->itemColor(),
@@ -45,35 +52,69 @@ class RequestController extends Controller
 		});
 	}
 
-	public function storeNew(Request $request)
+	public function storeNew(Employee $employee, Request $request)
 	{
 		$request->validate([
 			"form" => "required|array"
 		]);
 
 		$model = ModelsRequest::create([
-			"employee_id" => Auth::guard("employee")->id(),
+			"employee_id" => $employee->id,
 			"request_type" => ModelsRequest::TO_BARROW,
+			"accepted_by" => Auth::id(),
+			"released_by" => Auth::id(),
+			"accepted_at" => Carbon::now(),
+			"released_at" => Carbon::now(),
+			"status" => ModelsRequest::ACCEPTED
 		]);
 
-		foreach ($request->form as $item) {
-			RequestItem::create([
-				"request_id" => $model->id,
-				"item_id" => $item["item_id"],
-				"quantity" => $item["quantity"],
-			]);
+		DB::beginTransaction();
+
+		try {
+			foreach ($request->form as $item) {
+				DB::table("request_items")->insert([
+					"request_id" => $model->id,
+					"item_id" => $item["item_id"],
+					"quantity" => $item["quantity"],
+				]);
+
+				DB::table("employee_items")->updateOrInsert([
+					"employee_id" => $model->employee_id,
+					"item_id" => $item["item_id"],
+				], [
+					"quantity" => $item["quantity"],
+					"created_at" => Carbon::now(),
+					"returned_at" => null,
+					"status" => EmployeeItem::ON_HAND,
+				]);
+
+				DB::table("item_histories")->insert([
+					"employee_id" => $model->employee_id,
+					"item_id" => $item["item_id"],
+					"quantity" => $item["quantity"],
+					"type" => 1,
+					"status" => 1,
+					"created_at" => Carbon::now(),
+				]);
+			}
+
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollBack();
+
+			Session::flash("danger", ["Request Error", "Something went wrong!"]);
 		}
 
-		Session::flash("success", ["Request Saved", "You have successfully submitted a barrow request with " . count($request->form) . " items."]);
+		Session::flash("success", ["Request Saved", "You have successfully submitted a new request with " . count($request->form) . " items."]);
 
-		return response()->json(["redirect" => route("employee.requests.index")]);
+		return response()->json(["redirect" => route("admin.employees.profile", $employee->id)]);
 	}
 
-	public function getRepair(Request $request)
+	public function getRepair(Employee $employee, Request $request)
 	{
 		$search = $request->input("search");
 
-		$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+		$items = EmployeeItem::myItem($employee->id)->working()->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		});
 
@@ -89,6 +130,8 @@ class RequestController extends Controller
 			return [
 				"image" => asset("assets/images/add-item.png"),
 				"id" => $row->item_id,
+				"stock" => $row->item->stock_no,
+				"unit" => $row->item->unit,
 				"name" => $row->item->name,
 				"brand" => $row->item->brand,
 				"date_received" => $row->item->created_at->format("F d, Y")
@@ -96,35 +139,64 @@ class RequestController extends Controller
 		});
 	}
 
-	public function storeRepair(Request $request)
+	public function storeRepair(Employee $employee, Request $request)
 	{
 		$request->validate([
 			"form" => "required|array"
 		]);
 
 		$model = ModelsRequest::create([
-			"employee_id" => Auth::guard("employee")->id(),
+			"employee_id" => $employee->id,
 			"request_type" => ModelsRequest::TO_REPAIR,
+			"accepted_by" => Auth::id(),
+			"released_by" => Auth::id(),
+			"accepted_at" => Carbon::now(),
+			"released_at" => Carbon::now(),
+			"status" => ModelsRequest::ACCEPTED
 		]);
 
-		foreach ($request->form as $item) {
-			RequestItem::create([
-				"request_id" => $model->id,
-				"item_id" => $item["item_id"],
-				"quantity" => 1,
-			]);
+		DB::beginTransaction();
+
+		try {
+
+			foreach ($request->form as $item) {
+				DB::table("request_items")->insert([
+					"request_id" => $model->id,
+					"item_id" => $item["item_id"],
+					"quantity" => 1,
+				]);
+
+				DB::table("employee_items")
+					->where("employee_id", $model->employee_id)
+					->where("item_id", $item["item_id"])->update(["status" => EmployeeItem::TO_REPAIR, "returned_at" => Carbon::now()]);
+				DB::table("items")->where("id", $item["item_id"])->update(["status" => Item::REPAIR]);
+				DB::table("item_histories")->insert([
+					"employee_id" => $model->employee_id,
+					"item_id" => $item["item_id"],
+					"quantity" => 1,
+					"type" => ItemHistory::RETURNED,
+					"status" => Item::REPAIR,
+					"created_at" => Carbon::now(),
+				]);
+			}
+
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollBack();
+
+			Session::flash("danger", ["Request Error", "Something went wrong!"]);
 		}
 
 		Session::flash("success", ["Request Saved", "You have successfully submitted a repair request."]);
 
-		return response()->json(["redirect" => route("employee.requests.index")]);
+		return response()->json(["redirect" => route("admin.employees.profile", $employee->id)]);
 	}
 
-	public function getReturn(Request $request)
+	public function getReturn(Employee $employee, Request $request)
 	{
 		$search = $request->input("search");
 
-		$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+		$items = EmployeeItem::myItem($employee->id)->working()->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		});
 
@@ -140,6 +212,8 @@ class RequestController extends Controller
 			return [
 				"image" => asset("assets/images/add-item.png"),
 				"id" => $row->item_id,
+				"stock" => $row->item->stock_no,
+				"unit" => $row->item->unit,
 				"name" => $row->item->name,
 				"brand" => $row->item->brand,
 				"quantity" => $row->quantity,
@@ -151,14 +225,14 @@ class RequestController extends Controller
 		});
 	}
 
-	public function storeReturn(Request $request)
+	public function storeReturn(Employee $employee, Request $request)
 	{
 		$request->validate([
 			"form" => "required|array"
 		]);
 
 		$model = ModelsRequest::create([
-			"employee_id" => Auth::guard("employee")->id(),
+			"employee_id" => $employee->id,
 			"request_type" => ModelsRequest::TO_RETURN,
 		]);
 

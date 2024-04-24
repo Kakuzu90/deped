@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\Controller;
 use App\Models\EmployeeItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -15,7 +16,7 @@ class HomeController extends Controller
 		$status = $request->input("status");
 		$type = $request->input("type");
 
-		$items = EmployeeItem::myItem()->whereHas("item", function ($query) use ($search, $type) {
+		$items = EmployeeItem::myItem(Auth::guard("employee")->id())->whereHas("item", function ($query) use ($search, $type) {
 			if ($search) {
 				$query->where("name", "like", "%$search%");
 			}

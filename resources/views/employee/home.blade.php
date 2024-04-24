@@ -91,7 +91,7 @@
                                     <i class="mdi mdi-tools mdi-24px"></i>
                                 </span>
                             </div>
-                            <p class="mb-0 text-secondary fw-bold">{{ $item->item_id }}</p>
+                            <p class="mb-0 text-secondary fw-bold">{{ $item->stock_no }}</p>
                         </div>
                         <p class="mb-0 text-dark">
                             <span class="fw-bold">Item Name:</span> {{ $item->item->name }}
@@ -99,9 +99,17 @@
                         <p class="mb-0 text-dark">
                             <span class="fw-bold">Brand:</span> {{ $item->item->brand }}
                         </p>
-                        <p class="mb-0 text-dark">
-                            <span class="fw-bold">Condition:</span> <span class="badge bg-{{ $item->item->itemStatusColor() }}">{{ $item->item->itemStatus() }}</span>
-                        </p>
+												<p class="mb-0 text-dark">
+													<span class="fw-bold">Quantity:</span> {{ $item->item->quantity }}
+											</p>
+											<p class="mb-0 text-dark">
+												<span class="fw-bold">Unit:</span> {{ $item->item->unit }}
+										</p>
+                        @if ($item->item->isEquipment())
+												<p class="mb-0 text-dark">
+													<span class="fw-bold">Condition:</span> <span class="badge bg-{{ $item->item->itemStatusColor() }}">{{ $item->item->itemStatus() }}</span>
+												</p>
+												@endif
                     </div>
                     <div class="card-footer p-2 border-top">
                         <p class="mb-0 fw-bold text-dark font-12 text-end">

@@ -100,7 +100,7 @@
                             <span class="fw-bold">Brand:</span> {{ $item->item->brand }}
                         </p>
 												<p class="mb-0 text-dark">
-													<span class="fw-bold">Quantity:</span> {{ $item->item->quantity }}
+													<span class="fw-bold">Quantity:</span> {{ $item->quantity }}
 											</p>
 											<p class="mb-0 text-dark">
 												<span class="fw-bold">Unit:</span> {{ $item->item->unit }}

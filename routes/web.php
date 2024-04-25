@@ -57,10 +57,7 @@ Route::prefix("employee")
 
 		Route::controller(EmployeeRequestController::class)->prefix("requests")->as("requests.")->group(function () {
 			Route::get("", "index")->name("index");
-			Route::get("new", "new")->name("new");
-			Route::get("repair", "repair")->name("repair");
-			Route::get("return", "return")->name("return");
-			Route::get("{request}/update", "edit")->name("edit");
+			Route::get("generate/{request}", "generate")->name("generate");
 		});
 	});
 

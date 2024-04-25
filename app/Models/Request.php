@@ -47,6 +47,18 @@ class Request extends Model
 		return $this->hasMany(RequestItem::class);
 	}
 
+	public function totalSum()
+	{
+		return $this->items->sum(function ($item) {
+			return $item->quantity * $item->item->amount;
+		});
+	}
+
+	public function moneyFormat()
+	{
+		return number_format($this->totalSum(), 2, ".");
+	}
+
 	public function acceptedBy()
 	{
 		return $this->belongsTo(Admin::class, "accepted_by", "id")->withoutGlobalScope(Deleted::class);
@@ -99,7 +111,7 @@ class Request extends Model
 		} else if ($this->request_type === Request::TO_RETURN) {
 			return "To Return";
 		}
-		return "To Barrow";
+		return "To Borrow";
 	}
 
 	public function requestTypeColor()

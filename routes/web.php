@@ -88,9 +88,13 @@ Route::prefix("admin")
 			Route::apiResource("offices", OfficeController::class);
 			Route::apiResource("positions", PositionController::class);
 
-			Route::get("employees/{employee}/request-new", [RequestController::class, "create"])->name("requests.create");
-			Route::get("employees/{employee}/request-repair", [RequestController::class, "repair"])->name("requests.repair");
-			Route::get("employees/{employee}/request-returned", [RequestController::class, "returned"])->name("requests.returned");
+			Route::controller(RequestController::class)->prefix("employees/{employee}")->as("requests.")->group(function () {
+				Route::get("request-new", "create")->name("create");
+				Route::get("request-repair", "repair")->name("repair");
+				Route::get("request-returned", "returned")->name("returned");
+			});
+
+			Route::apiResource("requests", RequestController::class)->only(["index", "edit", "destroy", "show"]);
 
 			Route::get("employees/{employee}/profile", [AdminEmployeeController::class, "profile"])->name("employees.profile");
 			Route::patch("employees/{employee}/account", [AdminEmployeeController::class, "account"])->name("employees.profile.account");

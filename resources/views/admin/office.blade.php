@@ -58,7 +58,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-secondary">
+                                        <span class="badge px-2 py-1 bg-secondary">
                                             {{ $item->employees->count() }}
                                         </span>
                                     </td>

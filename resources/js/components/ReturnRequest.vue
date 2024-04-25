@@ -35,6 +35,9 @@
 				image: item.image,
 				item_id: item.id,
 				name: item.name,
+				stock: item.stock,
+				unit: item.unit,
+				amount: item.amount,
 				quantity: item.quantity,
 				max: item.max,
 				brand: item.brand,
@@ -67,14 +70,16 @@
 	}
 
 	const submit = () => {
-		btnLoading.value = true;
-		axios.post(props.api + "return/store", {form: form.value})
+		if (!hasPending.value) {
+			btnLoading.value = true;
+			axios.post(props.api + "return/store", {form: form.value})
 			.then((response) => {
 				btnLoading.value = false;
 				if (response.status === 200) {
 					window.location.assign(response.data.redirect)
 				}
 			})
+		}
 	}
 
 	const totalPages = computed(() => Math.ceil(form.value.length / itemsPerPage));
@@ -96,6 +101,27 @@
 		}
 	};
 
+	const hasPending = computed(() => {
+		return form.value.some(item => item.status === 0);
+	})
+
+	const setStatus = (index, status) => {
+		form.value[index].status = status;
+	}
+
+	const rowBg = (status) => {
+		if (status === 1) {
+			return "bg-soft-success";
+		}
+		if (status === 2) {
+			return "bg-soft-warning";
+		}
+		if (status === 3) {
+			return "bg-soft-danger"
+		}
+		return ""
+	}
+
 	onMounted(() => {
 		getLists()
 	})
@@ -113,8 +139,9 @@
 								<thead class="table-light">
 									<tr>
 										<th>Item</th>
-										<th class="text-center">Quantity</th>
-										<th class="text-center">Item Type</th>
+										<th class="text-center">Brand</th>
+										<th class="text-center">Amount</th>
+										<th class="text-center">Condition</th>
 										<th></th>
 									</tr>
 								</thead>
@@ -127,6 +154,7 @@
 									<tr
 										v-for="(item, index) in paginatedItems"
 										:key="index"
+										:class="rowBg(item.status)"
 									>
 										<td>
 											<img :src="item.image" class="rounded me-2" height="40" alt="Item Logo"/>
@@ -134,24 +162,26 @@
 												<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 												<br>
 												<small class="me-2">
-													<b>Code: </b> {{ item.item_id }}
-												</small>
-												<small>
-													<b>Brand: </b> {{ item.brand }}
+													<b>Stock No.: </b> {{ item.stock }}
 												</small>
 											</p>
 										</td>
 										<td class="text-center">
-											<input type="number" class="form-control mx-auto" 
-												min="1" :max="item.max" 
-												:value="item.quantity" style="width: 90px;" 
-												placeholder="Qty" 
-												:disabled="item.disabled"
-												@input="handleInput($event, item)"
-												/>
+											<span>{{ item.brand }}</span>
 										</td>
 										<td class="text-center">
-											<span class="badge p-1" :class="item.color">{{ item.text }}</span>
+											<span>&#8369;{{ item.amount }}</span>
+										</td>
+										<td class="text-center">
+											<button @click="setStatus(index, 1)" type="button" class="btn btn-sm btn-icon btn-success">
+												<i class="mdi mdi-check-all"></i>
+											</button>
+											<button @click="setStatus(index, 2)" type="button" class="btn btn-sm btn-icon btn-warning mx-1">
+												<i class="mdi mdi-tools"></i>
+											</button>
+											<button @click="setStatus(index, 3)" type="button" class="btn btn-sm btn-icon btn-danger">
+												<i class="mdi mdi-image-broken-variant"></i>
+											</button>
 										</td>
 										<td class="text-center align-middle">
 											<a href="javascript:void(0);"
@@ -200,7 +230,7 @@
 									<span class="font-family-secondary fw-bold text-primary">{{ item.name }}</span>
 									<br>
 									<small class="me-2">
-										<b>Code: </b> {{ item.id }}
+										<b>Stock No.: </b> {{ item.stock }}
 									</small>
 									<small>
 										<b>Brand: </b> {{ item.brand }}

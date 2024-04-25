@@ -73,7 +73,7 @@
                                         <span class="fw-bolder text-primary">{{ $item->office->name }}</span>
                                     </td>
                                     <td class="text-center align-middle">
-                                        <span class="badge bg-secondary">{{ $item->items->count() }}</span>
+                                        <span class="badge px-2 py-1 bg-secondary">{{ $item->items->count() }}</span>
                                     </td>
                                     <td class="text-center align-middle">
                                         <span class="badge py-1 bg-{{ $item->accountColor() }}">{{ $item->accountText() }}</span>

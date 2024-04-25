@@ -76,7 +76,7 @@
                     </li>
                     <li class="menu-title">Transaction</li>
                     <li class="menu-item">
-                        <a href="#" class="menu-link">
+                        <a href="{{ route("admin.requests.index") }}" class="menu-link">
 													<span class="menu-icon"><i class="mdi mdi-clipboard-account"></i></span>
 													<span class="menu-text"> Requests </span>
 												</a>

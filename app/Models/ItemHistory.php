@@ -18,7 +18,7 @@ class ItemHistory extends Model
 	public const DEFECTIVE = 3;
 
 	protected $fillable = [
-		"employee_id", "item_id",
+		"employee_id", "item_id", "request_id",
 		"quantity", "type", "status",
 		"deleted_at"
 	];

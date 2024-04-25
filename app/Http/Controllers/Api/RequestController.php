@@ -112,6 +112,7 @@ class RequestController extends Controller
 				DB::table("item_histories")->insert([
 					"employee_id" => $employee->id,
 					"item_id" => $item["item_id"],
+					"request_id" => $modelID,
 					"quantity" => $item["quantity"],
 					"type" => 1,
 					"status" => 1,
@@ -155,7 +156,7 @@ class RequestController extends Controller
 				"unit" => $row->item->unit,
 				"name" => $row->item->name,
 				"brand" => $row->item->brand,
-				"date_received" => $row->item->created_at->format("F d, Y")
+				"date_received" => $row->created_at->format("F d, Y")
 			];
 		});
 	}
@@ -194,6 +195,7 @@ class RequestController extends Controller
 				DB::table("item_histories")->insert([
 					"employee_id" => $model->employee_id,
 					"item_id" => $item["item_id"],
+					"request_id" => $model->id,
 					"quantity" => 1,
 					"type" => ItemHistory::RETURNED,
 					"status" => Item::REPAIR,
@@ -236,12 +238,14 @@ class RequestController extends Controller
 				"stock" => $row->item->stock_no,
 				"unit" => $row->item->unit,
 				"name" => $row->item->name,
+				"amount" => $row->item->amount,
 				"brand" => $row->item->brand,
 				"quantity" => $row->quantity,
 				"max" => $row->item->isEquipment() ? $row->item->quantity : $row->item->quantity(),
 				"disabled" => $row->item->isEquipment(),
 				"color" => "bg-" . $row->item->itemColor(),
 				"text" => $row->item->itemType(),
+				"status" => 0,
 			];
 		});
 	}
@@ -255,36 +259,69 @@ class RequestController extends Controller
 		$model = ModelsRequest::create([
 			"employee_id" => $employee->id,
 			"request_type" => ModelsRequest::TO_RETURN,
+			"accepted_by" => Auth::id(),
+			"released_by" => Auth::id(),
+			"accepted_at" => Carbon::now(),
+			"released_at" => Carbon::now(),
+			"status" => ModelsRequest::ACCEPTED
 		]);
 
-		foreach ($request->form as $item) {
-			RequestItem::create([
-				"request_id" => $model->id,
-				"item_id" => $item["item_id"],
-				"quantity" => $item["quantity"],
-			]);
+		DB::beginTransaction();
+
+		try {
+
+			foreach ($request->form as $item) {
+				DB::table("request_items")->insert([
+					"request_id" => $model->id,
+					"item_id" => $item["item_id"],
+					"quantity" => 1,
+				]);
+
+				DB::table("employee_items")
+					->where("employee_id", $model->employee_id)
+					->where("item_id", $item["item_id"])->update(["status" => EmployeeItem::RETURNED, "returned_at" => Carbon::now()]);
+				DB::table("items")->where("id", $item["item_id"])->update(["status" => $item["status"]]);
+				DB::table("item_histories")->insert([
+					"employee_id" => $model->employee_id,
+					"item_id" => $item["item_id"],
+					"request_id" => $model->id,
+					"quantity" => 1,
+					"type" => ItemHistory::RETURNED,
+					"status" => $item["status"],
+					"created_at" => Carbon::now(),
+				]);
+			}
+
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollBack();
+
+			Session::flash("danger", ["Request Error", "Something went wrong!"]);
 		}
 
 		Session::flash("success", ["Request Saved", "You have successfully submitted a return request."]);
 
-		return response()->json(["redirect" => route("employee.requests.index")]);
+		return response()->json(["redirect" => route("admin.employees.profile", $employee->id)]);
 	}
 
 	public function getUpdate(ModelsRequest $model)
 	{
 		return response()->json([
-			"editable" => $model->isPending(),
 			"data" => $model->items->map(function ($row) {
 				return [
 					"image" => asset("assets/images/add-item.png"),
 					"item_id" => $row->item_id,
 					"name" => $row->item->name,
 					"brand" => $row->item->brand,
+					"amount" => $row->item->amount,
+					"stock" => $row->item->stock_no,
+					"unit" => $row->item->unit,
 					"quantity" => $row->quantity,
 					"max" => $row->item->isEquipment() ? $row->item->quantity : $row->item->quantity(),
 					"disabled" => $row->item->isEquipment(),
 					"color" => "bg-" . $row->item->itemColor(),
 					"text" => $row->item->itemType(),
+					"date" => $row->request->accepted_at->format("F d, Y")
 				];
 			})
 		]);
@@ -294,7 +331,7 @@ class RequestController extends Controller
 	{
 		$search = $request->input("search");
 
-		$except = EmployeeItem::working()->whereHas("item", function ($query) {
+		$except = EmployeeItem::working()->where("employee_id", "!=", $model->employee_id)->whereHas("item", function ($query) {
 			$query->where("item_type", Item::EQUIPMENT);
 		})->pluck("item_id");
 		$items = Item::working()->whereNotIn("id", $except);
@@ -305,7 +342,7 @@ class RequestController extends Controller
 			}
 		}
 		if ($model->isToRepair()) {
-			$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+			$items = EmployeeItem::myItem($model->employee_id)->where("status", "!=", EmployeeItem::RETURNED)->whereHas("item", function ($query) {
 				$query->where("item_type", Item::EQUIPMENT);
 			});
 			if ($search) {
@@ -315,7 +352,7 @@ class RequestController extends Controller
 			}
 		}
 		if ($model->isToReturn()) {
-			$items = EmployeeItem::myItem()->working()->whereHas("item", function ($query) {
+			$items = EmployeeItem::myItem($model->employee_id)->whereHas("item", function ($query) {
 				$query->where("item_type", Item::EQUIPMENT);
 			});
 			if ($search) {
@@ -334,8 +371,11 @@ class RequestController extends Controller
 				return [
 					"image" => asset("assets/images/add-item.png"),
 					"id" => $item->id,
+					"stock" => $item->stock_no,
+					"unit" => $item->unit,
 					"name" => $item->name,
 					"brand" => $item->brand,
+					"amount" => $item->amount,
 					"quantity" => $item->isEquipment() ? $item->quantity : $item->quantity(),
 					"disabled" => $item->isEquipment(),
 					"color" => "bg-" . $item->itemColor(),
@@ -348,8 +388,12 @@ class RequestController extends Controller
 				return [
 					"image" => asset("assets/images/add-item.png"),
 					"id" => $row->item_id,
+					"stock" => $row->item->stock_no,
+					"unit" => $row->item->unit,
 					"name" => $row->item->name,
 					"brand" => $row->item->brand,
+					"status" => $row->statusText(),
+					"color" => "text-" . $row->statusColor(),
 					"date_received" => $row->item->created_at->format("F d, Y")
 				];
 			});
@@ -381,15 +425,105 @@ class RequestController extends Controller
 			RequestItem::where("request_id", $model->id)->whereIn("item_id", $request->delete)->delete();
 		}
 
-		foreach ($request->form as $item) {
-			RequestItem::updateOrCreate(
-				["request_id" => $model->id, "item_id" => $item["item_id"]],
-				["quantity" => $item["quantity"]]
-			);
+		$model->update([
+			"accepted_by" => Auth::id(),
+			"released_by" => Auth::id(),
+			"accepted_at" => Carbon::now(),
+			"released_at" => Carbon::now(),
+		]);
+
+		DB::beginTransaction();
+
+		try {
+			foreach ($request->form as $item) {
+
+				$quantity = $item["quantity"];
+
+				if ($model->isToBarrow()) {
+					$owned = DB::table("employee_items")->where([
+						"employee_id" => $model->employee_id,
+						"item_id" => $item["item_id"],
+					])->first();
+
+					if ($owned) {
+						$itemModel = Item::find($item["item_id"]);
+						$requestModel = RequestItem::where("request_id", $model->id)->where("item_id", $item["item_id"])->first();
+						if ($itemModel->isSupply()) {
+							$quantity += ($owned->quantity - $requestModel->quantity);
+						}
+						DB::table("employee_items")->where([
+							"employee_id" => $model->employee_id,
+							"item_id" => $item["item_id"],
+						])->update([
+							"quantity" => $quantity,
+							"created_at" => Carbon::now(),
+							"returned_at" => null,
+							"status" => EmployeeItem::ON_HAND,
+						]);
+					} else {
+						DB::table("employee_items")->insert([
+							"employee_id" => $model->employee_id,
+							"item_id" => $item["item_id"],
+							"quantity" => $quantity,
+							"created_at" => Carbon::now(),
+							"returned_at" => null,
+							"status" => EmployeeItem::ON_HAND,
+						]);
+					}
+
+					DB::table("item_histories")
+						->where("request_id", $model->id)
+						->update([
+							"quantity" => $quantity,
+							"type" => 1,
+							"status" => 1,
+						]);
+				}
+
+				// if ($model->isToRepair()) {
+				// 	DB::table("employee_items")
+				// 		->where("employee_id", $model->employee_id)
+				// 		->where("item_id", $item["item_id"])->update(["status" => EmployeeItem::TO_REPAIR, "returned_at" => Carbon::now()]);
+				// 	DB::table("items")->where("id", $item["item_id"])->update(["status" => Item::REPAIR]);
+				// 	DB::table("item_histories")
+				// 		->where("request_id", $model->id)
+				// 		->update([
+				// 			"quantity" => 2,
+				// 			"type" => ItemHistory::RETURNED,
+				// 			"status" => Item::REPAIR,
+				// 		]);
+				// }
+
+				// if ($model->isToReturn()) {
+				// 	DB::table("employee_items")
+				// 		->where("employee_id", $model->employee_id)
+				// 		->where("item_id", $item["item_id"])->update(["status" => EmployeeItem::RETURNED, "returned_at" => Carbon::now()]);
+				// 	DB::table("items")->where("id", $item["item_id"])->update(["status" => $item["status"]]);
+
+				// 	DB::table("item_histories")
+				// 		->where("request_id", $model->id)
+				// 		->update([
+				// 			"quantity" => 1,
+				// 			"type" => ItemHistory::RETURNED,
+				// 			"status" => $item["status"],
+				// 		]);
+				// }
+
+				DB::table("request_items")->updateOrInsert(
+					["request_id" => $model->id, "item_id" => $item["item_id"]],
+					["quantity" => $quantity]
+				);
+			}
+
+			DB::commit();
+		} catch (\Exception $e) {
+			DB::rollBack();
+			//return $e->getMessage();
+			Session::flash("danger", ["Request Error", "Something went wrong!"]);
 		}
 
-		Session::flash("success", ["Request Updated", "You have successfully updated your requests."]);
+		Session::flash("success", ["Request Updated", "You have successfully updated the request of " . $model->employee->full_name]);
 
-		return response()->json(["redirect" => route("employee.requests.index")]);
+		return response()->json(["redirect" => route("admin.requests.edit", $model->id)]);
 	}
 }

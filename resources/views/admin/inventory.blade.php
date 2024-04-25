@@ -76,7 +76,7 @@
 																</div>
 															</td>
 															<td class="text-center">
-																<span>{{ $item->quantity }}</span>
+																<span>{{ $item->quantity() }}</span>
 															</td>
 															<td class="text-center">
 																<span>{{ $item->brand }}</span>

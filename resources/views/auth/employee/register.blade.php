@@ -5,6 +5,7 @@
 @endsection
 
 @section("links")
+		<link rel="stylesheet" href="{{ asset("assets/libs/jquery-toast-plugin/jquery.toast.min.css") }}">
     <link rel="stylesheet" href="{{ asset("assets/libs/select2/css/select2.min.css") }}">
 @endsection
 
@@ -151,7 +152,10 @@
 @endsection
 
 @section("scripts")
+		<script src="{{ asset("assets/libs/jquery-toast-plugin/jquery.toast.min.js") }}"></script>
+    <script src="{{ asset("assets/js/pages/toastr.js") }}"></script>
     <script src="{{ asset("assets/libs/select2/js/select2.min.js") }}"></script>
+		@include("toastr")
     <script>
         $("[data-toggle=select2]").each(function() {
             const placeholder = $(this).data("placeholder");
